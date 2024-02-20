@@ -28,87 +28,87 @@
 
   // Manage Page Advanced Search Queries to remove
   // Comment out a line to show the query.
-  const manageQueriesToHide = [
-    "By Creation Date",
-    "By Status",
-    // "TodaysSamples",
-    "AHL Link# samples",
-    "Bacteriology Counts",
-    "Bees to Test",
-    "CFIA Sa_Cult Isolate",
-    "CFIA to Test",
-    "CompletedbyParam",
-    "CompletedbyParamList",
-    // "CompletedbyTestUser",
-    // "Data In Progress Short...",
-    // "Data entered Short code",
-    "FM samples more than 1...",
-    "Milk to Test",
-    // "Need approval Short code",
-    // "NeedApproval",
-    // "NeedApproval Extern",
-    "NeedsApprovalCFIAPBS",
-    "OMAFRA_SamplesByDate",
-    // "Result level > or < value",
-    "SN - Combustion",
-    "Sample To Dispose",
-    "Sample Type by Date",
-    "Sample by Group",
-    // "Sample by Short Code",
-    // "Sample by Test",
-    "Sample by resultvalu",
-    // "SampleAnimalClientID",
-    // "SampleBySubmission",
-    "SampleByVTH Hosp#",
-    "SampleInProgress#day",
-    // "SampleSpeciesbyresultv...",
-    // "SampleToTest NO OMAF",
-    // "SampleToTest OMAFRA",
-    "SampleVTHAccessionID",
-    // "SamplebySingleTest",
-    // "Samples To Test",
-    // "Samples Worklist ID",
-    // "Samples by Method ID",
-    // "Samples by Method ID R...",
-    "SamplesByEmpVet",
-    "SamplesByFarm",
-    // "SamplesByInvoice#",
-    // "SamplesByOwner",
-    "SamplesByPremiseID",
-    // "SamplesByProducer",
-    // "SamplesByProject",
-    // "SamplesForClient",
-    "SamplesInStorage",
-    // "SamplesTo Test ALL",
-    "SamplesWithHolds",
-    // "Short Code DateRange",
-    // "SubmitterCaseNumber",
-    // "TOXI - Inorganic",
-    // "TOXI - Organic",
-    // "Test date to Test",
-    // "TestsByClient",
-    "To Test by Labsect",
-  ];
+  const manageQueriesToKeep = new Set([
+    // "By Creation Date",
+    // "By Status",
+    "TodaysSamples",
+    // "AHL Link# samples",
+    // "Bacteriology Counts",
+    // "Bees to Test",
+    // "CFIA Sa_Cult Isolate",
+    // "CFIA to Test",
+    // "CompletedbyParam",
+    // "CompletedbyParamList",
+    "CompletedbyTestUser",
+    "Data In Progress Short...",
+    "Data entered Short code",
+    // "FM samples more than 1...",
+    // "Milk to Test",
+    "Need approval Short code",
+    "NeedApproval",
+    "NeedApproval Extern",
+    // "NeedsApprovalCFIAPBS",
+    // "OMAFRA_SamplesByDate",
+    "Result level > or < value",
+    // "SN - Combustion",
+    // "Sample To Dispose",
+    // "Sample Type by Date",
+    // "Sample by Group",
+    "Sample by Short Code",
+    "Sample by Test",
+    // "Sample by resultvalu",
+    "SampleAnimalClientID",
+    "SampleBySubmission",
+    // "SampleByVTH Hosp#",
+    // "SampleInProgress#day",
+    "SampleSpeciesbyresultv...",
+    "SampleToTest NO OMAF",
+    "SampleToTest OMAFRA",
+    // "SampleVTHAccessionID",
+    "SamplebySingleTest",
+    "Samples To Test",
+    "Samples Worklist ID",
+    "Samples by Method ID",
+    "Samples by Method ID R...",
+    // "SamplesByEmpVet",
+    // "SamplesByFarm",
+    "SamplesByInvoice#",
+    "SamplesByOwner",
+    // "SamplesByPremiseID",
+    "SamplesByProducer",
+    "SamplesByProject",
+    "SamplesForClient",
+    // "SamplesInStorage",
+    "SamplesTo Test ALL",
+    // "SamplesWithHolds",
+    "Short Code DateRange",
+    "SubmitterCaseNumber",
+    "TOXI - Inorganic",
+    "TOXI - Organic",
+    "Test date to Test",
+    "TestsByClient",
+    // "To Test by Labsect",
+  ]);
 
   // Receive Page Advanced Search Queries to remove
   // Comment out a line to show the query.
-  const receiveQueriesToHide = [
-    // "Rush Samples To Receive",
-    // "All Feeds to Receive",
+  const receiveQueriesToKeep = new Set([
+    "Rush Samples To Receive",
+    "All Feeds to Receive",
     "AllSamplesToReceive",
     // "Bees to Receive",
-    // "CFIA to receive",
+    "CFIA to receive",
     // "GLP to Receive",
-    "QE0587 to Receive",
-    "QE0843 to Receive",
+    // "QE0587 to Receive",
+    // "QE0843 to Receive",
     "Receive by Project",
-    "SampleBySubmission",
-    // "SamplesForClient",
+    // "SampleBySubmission",
+    "SamplesForClient",
     "SamplesReceiveDate",
     "SamplestoReceiveLS",
     // "Test date reached",
     "TodaysSamplesToRec",
-  ];
+  ]);
 
   // Cleaning up clutter
   const removeExtraColumns = true;
@@ -136,11 +136,11 @@
 
     window.addEventListener("load", () => {
       const onReceivePage = Boolean(document.getElementById("Receive"));
-      const queriesToHide = onReceivePage
-        ? receiveQueriesToHide
-        : manageQueriesToHide;
+      const queriesToKeep = onReceivePage
+        ? receiveQueriesToKeep
+        : manageQueriesToKeep;
 
-      hideAdvancedSearchQueries(queriesToHide);
+      hideAdvancedSearchQueries(queriesToKeep);
       if (easyMethodSelectMode) addAutoCompleteButtons(methodButtons);
     });
     return;
@@ -211,13 +211,13 @@ function activateRainbowMode() {
 }
 
 /* HIDE RECEIVE PAGE QUERIES */
-function hideAdvancedSearchQueries(queriesToRemove: Array<string>) {
+function hideAdvancedSearchQueries(queriesToKeep: Set<string>) {
   // Advanced search
   const queryList = document.querySelectorAll(
     "#querysearch_row tr"
   ) as NodeListOf<HTMLTableRowElement> | null;
   for (const query of queryList ?? []) {
-    if (queriesToRemove.includes(query.textContent?.trim() ?? ""))
+    if (!queriesToKeep.has(query.textContent?.trim() ?? ""))
       query.style.display = "none";
   }
 
@@ -231,7 +231,7 @@ function hideAdvancedSearchQueries(queriesToRemove: Array<string>) {
       "table.topsearch_queryselector_item"
     ) as NodeListOf<HTMLTableRowElement> | null;
     for (const item of Array.from(items ?? [])) {
-      if (queriesToRemove.includes(item.textContent?.trim() ?? ""))
+      if (!queriesToKeep.has(item.textContent?.trim() ?? ""))
         item.style.display = "none";
     }
   });
