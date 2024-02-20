@@ -11,11 +11,12 @@
 // ==/UserScript==
 (function () {
     /* OPTIONS */
-    var _a, _b;
+    var _a, _b, _c;
     // Rainbow mode
     const rainbowMode = false;
     // Submission Form links
     const submissionFormLinks = true;
+    const fastgridLinks = true;
     // Easy Method Select Mode
     const easyMethodSelectMode = true;
     const methodButtons = [
@@ -43,6 +44,7 @@
         // "Data In Progress Short...",
         // "Data entered Short code",
         "FM samples more than 1...",
+        "FM samples more than 14 days",
         "Milk to Test",
         // "Need approval Short code",
         // "NeedApproval",
@@ -62,6 +64,7 @@
         "SampleByVTH Hosp#",
         "SampleInProgress#day",
         "SampleSpeciesbyresultv...",
+        "SampleSpeciesbyresultvalue",
         "SampleToTest NO OMAF",
         // "SampleToTest OMAFRA",
         "SampleVTHAccessionID",
@@ -150,6 +153,20 @@
             activateRainbowMode();
         if (submissionFormLinks)
             addSubmissionFormLinks();
+        return;
+    }
+    if (((_c = window.self.frameElement) === null || _c === void 0 ? void 0 : _c.id) === "rightframe") {
+        /* WELCOME TO THE RIGHTFRAME            */
+        /* This contains the fastgrid tables    */
+        console.log("Doing FASTGRID Stuff");
+        const observer = new MutationObserver((_mutations, observer) => {
+            const submissionDivs = document.querySelectorAll("div.dataentry2-rowheaderdiv:first-child > .gwt-HTML");
+            if (submissionDivs.length > 0) {
+                observer.disconnect();
+                addFastgridLinks();
+            }
+        });
+        observer.observe(window.document.body, { childList: true, subtree: true });
         return;
     }
     // create date width fix
@@ -255,19 +272,34 @@ function addSubmissionFormLinks() {
     const linkInitial = `https://${window.location.host}/labservices/rc?command=ViewAttachment&sdcid=Submission&keyid1=`;
     const linkFinal = "&keyid2=(null)&keyid3=(null)&attachmentnum=1";
     const submissionRegex = /\d{2}-\d{6}/;
-    const spanStyle = "border: 1px solid  #999; padding: 0 3px; border-radius: 3px; margin-left: 35px; background: #eed; filter: opacity(0.65); display: inline";
-    const linkStyle = "font-weight: normal; color: #000; letter-spacing: normal; display: inline-flex; align-items: center; gap: 2px;";
     for (const row of titleRows) {
         const submissionID = (_b = submissionRegex.exec((_a = row.textContent) !== null && _a !== void 0 ? _a : "")) === null || _b === void 0 ? void 0 : _b[0];
         const submissionLinkDiv = document.createElement("div");
-        submissionLinkDiv.setAttribute("style", spanStyle);
+        submissionLinkDiv.setAttribute("style", "border: 1px solid  #999; padding: 0 3px; border-radius: 3px; margin-left: 35px; background: #eed; filter: opacity(0.65); display: inline");
         const submissionLink = document.createElement("a");
         submissionLink.href = linkInitial + submissionID + linkFinal;
-        submissionLink.setAttribute("style", linkStyle);
+        submissionLink.setAttribute("style", "font-weight: normal; color: #000; letter-spacing: normal; display: inline-flex; align-items: center; gap: 2px;");
         submissionLink.innerHTML = `Submission Form ${externalLinkImage}`;
         submissionLink.target = "_blank";
         submissionLink.title = "Open Submission Form in new tab";
         submissionLinkDiv.append(submissionLink);
         row.append(submissionLinkDiv);
+    }
+}
+function addFastgridLinks() {
+    var _a, _b, _c;
+    const submissionDivs = document.querySelectorAll("table.dataentry2-gridheader td:first-child div.dataentry2-rowheaderdiv:first-child > .gwt-HTML");
+    const submissionRegex = /\d{2}-\d{6}/;
+    for (const div of submissionDivs !== null && submissionDivs !== void 0 ? submissionDivs : []) {
+        const submissionID = (_b = submissionRegex.exec((_a = div.textContent) !== null && _a !== void 0 ? _a : "")) === null || _b === void 0 ? void 0 : _b[0];
+        if (!submissionID)
+            continue;
+        const submissionLink = document.createElement("a");
+        submissionLink.href = `https://${window.location.host}/labservices/rc?command=ViewAttachment&sdcid=Submission&keyid1=${submissionID}&keyid2=(null)&keyid3=(null)&attachmentnum=1`;
+        submissionLink.text = (_c = div.textContent) !== null && _c !== void 0 ? _c : "";
+        submissionLink.target = "_blank";
+        submissionLink.title = "Open submission form in new tab";
+        div.textContent = "";
+        div.append(submissionLink);
     }
 }

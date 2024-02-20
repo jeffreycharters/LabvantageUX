@@ -17,6 +17,7 @@
 
   // Submission Form links
   const submissionFormLinks = true;
+  const fastgridLinks = true;
 
   // Easy Method Select Mode
   const easyMethodSelectMode = true;
@@ -46,6 +47,7 @@
     // "Data In Progress Short...",
     // "Data entered Short code",
     "FM samples more than 1...",
+    "FM samples more than 14 days",
     "Milk to Test",
     // "Need approval Short code",
     // "NeedApproval",
@@ -65,6 +67,7 @@
     "SampleByVTH Hosp#",
     "SampleInProgress#day",
     "SampleSpeciesbyresultv...",
+    "SampleSpeciesbyresultvalue",
     "SampleToTest NO OMAF",
     // "SampleToTest OMAFRA",
     "SampleVTHAccessionID",
@@ -158,6 +161,27 @@
     if (rainbowMode) activateRainbowMode();
 
     if (submissionFormLinks) addSubmissionFormLinks();
+
+    return;
+  }
+
+  if (window.self.frameElement?.id === "rightframe") {
+    /* WELCOME TO THE RIGHTFRAME            */
+    /* This contains the fastgrid tables    */
+    console.log("Doing FASTGRID Stuff");
+
+    const observer = new MutationObserver((_mutations, observer) => {
+      const submissionDivs = document.querySelectorAll(
+        "div.dataentry2-rowheaderdiv:first-child > .gwt-HTML"
+      );
+
+      if (submissionDivs.length > 0) {
+        observer.disconnect();
+        addFastgridLinks();
+      }
+    });
+
+    observer.observe(window.document.body, { childList: true, subtree: true });
 
     return;
   }
@@ -289,25 +313,49 @@ function addSubmissionFormLinks() {
   const linkFinal = "&keyid2=(null)&keyid3=(null)&attachmentnum=1";
   const submissionRegex = /\d{2}-\d{6}/;
 
-  const spanStyle =
-    "border: 1px solid  #999; padding: 0 3px; border-radius: 3px; margin-left: 35px; background: #eed; filter: opacity(0.65); display: inline";
-  const linkStyle =
-    "font-weight: normal; color: #000; letter-spacing: normal; display: inline-flex; align-items: center; gap: 2px;";
-
   for (const row of titleRows) {
     const submissionID = submissionRegex.exec(row.textContent ?? "")?.[0];
 
     const submissionLinkDiv = document.createElement("div");
-    submissionLinkDiv.setAttribute("style", spanStyle);
+    submissionLinkDiv.setAttribute(
+      "style",
+      "border: 1px solid  #999; padding: 0 3px; border-radius: 3px; margin-left: 35px; background: #eed; filter: opacity(0.65); display: inline"
+    );
 
     const submissionLink = document.createElement("a");
     submissionLink.href = linkInitial + submissionID + linkFinal;
-    submissionLink.setAttribute("style", linkStyle);
+    submissionLink.setAttribute(
+      "style",
+      "font-weight: normal; color: #000; letter-spacing: normal; display: inline-flex; align-items: center; gap: 2px;"
+    );
     submissionLink.innerHTML = `Submission Form ${externalLinkImage}`;
     submissionLink.target = "_blank";
     submissionLink.title = "Open Submission Form in new tab";
 
     submissionLinkDiv.append(submissionLink);
     row.append(submissionLinkDiv);
+  }
+}
+
+function addFastgridLinks() {
+  const submissionDivs = document.querySelectorAll(
+    "table.dataentry2-gridheader td:first-child div.dataentry2-rowheaderdiv:first-child > .gwt-HTML"
+  );
+
+  const submissionRegex = /\d{2}-\d{6}/;
+
+  for (const div of submissionDivs ?? []) {
+    const submissionID = submissionRegex.exec(div.textContent ?? "")?.[0];
+    if (!submissionID) continue;
+
+    const submissionLink = document.createElement("a");
+    submissionLink.href = `https://${window.location.host}/labservices/rc?command=ViewAttachment&sdcid=Submission&keyid1=${submissionID}&keyid2=(null)&keyid3=(null)&attachmentnum=1`;
+    submissionLink.text = div.textContent ?? "";
+    submissionLink.target = "_blank";
+    submissionLink.title = "Open submission form in new tab";
+
+    div.textContent = "";
+
+    div.append(submissionLink);
   }
 }
