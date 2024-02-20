@@ -14,6 +14,8 @@
     var _a, _b;
     // Rainbow mode
     const rainbowMode = false;
+    // Submission Form links
+    const submissionFormLinks = true;
     // Easy Method Select Mode
     const easyMethodSelectMode = true;
     const methodButtons = [
@@ -26,85 +28,85 @@
     ];
     // Manage Page Advanced Search Queries to remove
     // Comment out a line to show the query.
-    const manageQueriesToKeep = new Set([
-        // "By Creation Date",
-        // "By Status",
+    const manageQueriesToHide = new Set([
+        "By Creation Date",
+        "By Status",
         "TodaysSamples",
-        // "AHL Link# samples",
-        // "Bacteriology Counts",
-        // "Bees to Test",
-        // "CFIA Sa_Cult Isolate",
-        // "CFIA to Test",
-        // "CompletedbyParam",
-        // "CompletedbyParamList",
+        "AHL Link# samples",
+        "Bacteriology Counts",
+        "Bees to Test",
+        "CFIA Sa_Cult Isolate",
+        "CFIA to Test",
+        "CompletedbyParam",
+        "CompletedbyParamList",
         "CompletedbyTestUser",
-        "Data In Progress Short...",
-        "Data entered Short code",
-        // "FM samples more than 1...",
-        // "Milk to Test",
-        "Need approval Short code",
-        "NeedApproval",
+        // "Data In Progress Short...",
+        // "Data entered Short code",
+        "FM samples more than 1...",
+        "Milk to Test",
+        // "Need approval Short code",
+        // "NeedApproval",
         "NeedApproval Extern",
-        // "NeedsApprovalCFIAPBS",
-        // "OMAFRA_SamplesByDate",
-        "Result level > or < value",
-        // "SN - Combustion",
-        // "Sample To Dispose",
-        // "Sample Type by Date",
-        // "Sample by Group",
-        "Sample by Short Code",
-        "Sample by Test",
-        // "Sample by resultvalu",
-        "SampleAnimalClientID",
-        "SampleBySubmission",
-        // "SampleByVTH Hosp#",
-        // "SampleInProgress#day",
+        "NeedsApprovalCFIAPBS",
+        "OMAFRA_SamplesByDate",
+        // "Result level > or < value",
+        "SN - Combustion",
+        "Sample To Dispose",
+        "Sample Type by Date",
+        "Sample by Group",
+        // "Sample by Short Code",
+        // "Sample by Test",
+        "Sample by resultvalu",
+        // "SampleAnimalClientID",
+        // "SampleBySubmission",
+        "SampleByVTH Hosp#",
+        "SampleInProgress#day",
         "SampleSpeciesbyresultv...",
         "SampleToTest NO OMAF",
-        "SampleToTest OMAFRA",
-        // "SampleVTHAccessionID",
+        // "SampleToTest OMAFRA",
+        "SampleVTHAccessionID",
         "SamplebySingleTest",
-        "Samples To Test",
-        "Samples Worklist ID",
+        // "Samples To Test",
+        // "Samples Worklist ID",
         "Samples by Method ID",
-        "Samples by Method ID R...",
-        // "SamplesByEmpVet",
-        // "SamplesByFarm",
-        "SamplesByInvoice#",
-        "SamplesByOwner",
-        // "SamplesByPremiseID",
+        // "Samples by Method ID R...",
+        "SamplesByEmpVet",
+        "SamplesByFarm",
+        // "SamplesByInvoice#",
+        // "SamplesByOwner",
+        "SamplesByPremiseID",
         "SamplesByProducer",
-        "SamplesByProject",
+        // "SamplesByProject",
         "SamplesForClient",
-        // "SamplesInStorage",
-        "SamplesTo Test ALL",
-        // "SamplesWithHolds",
-        "Short Code DateRange",
-        "SubmitterCaseNumber",
-        "TOXI - Inorganic",
-        "TOXI - Organic",
+        "SamplesInStorage",
+        // "SamplesTo Test ALL",
+        "SamplesWithHolds",
+        // "Short Code DateRange",
+        // "SubmitterCaseNumber",
+        // "TOXI - Inorganic",
+        // "TOXI - Organic",
         "Test date to Test",
         "TestsByClient",
-        // "To Test by Labsect",
+        "To Test by Labsect",
     ]);
     // Receive Page Advanced Search Queries to remove
     // Comment out a line to show the query.
-    const receiveQueriesToKeep = new Set([
-        "Rush Samples To Receive",
-        "All Feeds to Receive",
-        "AllSamplesToReceive",
-        // "Bees to Receive",
-        "CFIA to receive",
-        // "GLP to Receive",
-        // "QE0587 to Receive",
-        // "QE0843 to Receive",
-        "Receive by Project",
-        // "SampleBySubmission",
-        "SamplesForClient",
-        "SamplesReceiveDate",
-        "SamplestoReceiveLS",
-        // "Test date reached",
-        "TodaysSamplesToRec",
+    const receiveQueriesToHide = new Set([
+        // "Rush Samples To Receive",
+        // "All Feeds to Receive",
+        // "AllSamplesToReceive",
+        "Bees to Receive",
+        // "CFIA to receive",
+        "GLP to Receive",
+        "QE0587 to Receive",
+        "QE0843 to Receive",
+        // "Receive by Project",
+        "SampleBySubmission",
+        // "SamplesForClient",
+        // "SamplesReceiveDate",
+        // "SamplestoReceiveLS",
+        "Test date reached",
+        // "TodaysSamplesToRec",
     ]);
     // Cleaning up clutter
     const removeExtraColumns = true;
@@ -128,13 +130,13 @@
         /* This starts below the "receive sample | create worklist | ..." row */
         console.log("Doing navFrame Stuff");
         window.addEventListener("load", () => {
-            const onReceivePage = Boolean(document.getElementById("Receive"));
-            const queriesToKeep = onReceivePage
-                ? receiveQueriesToKeep
-                : manageQueriesToKeep;
-            hideAdvancedSearchQueries(queriesToKeep);
             if (easyMethodSelectMode)
                 addAutoCompleteButtons(methodButtons);
+            const onReceivePage = Boolean(document.getElementById("Receive"));
+            if (onReceivePage)
+                hideAdvancedSearchQueries(receiveQueriesToHide);
+            else
+                hideAdvancedSearchQueries(manageQueriesToHide);
         });
         return;
     }
@@ -146,6 +148,8 @@
             removeColumns(headingsToRemove, cellsToRemove);
         if (rainbowMode)
             activateRainbowMode();
+        if (submissionFormLinks)
+            addSubmissionFormLinks();
         return;
     }
     // create date width fix
@@ -193,12 +197,12 @@ function activateRainbowMode() {
     }
 }
 /* HIDE RECEIVE PAGE QUERIES */
-function hideAdvancedSearchQueries(queriesToKeep) {
+function hideAdvancedSearchQueries(queriesToHide) {
     var _a, _b;
     // Advanced search
     const queryList = document.querySelectorAll("#querysearch_row tr");
     for (const query of queryList !== null && queryList !== void 0 ? queryList : []) {
-        if (!queriesToKeep.has((_b = (_a = query.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : ""))
+        if (queriesToHide.has((_b = (_a = query.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : ""))
             query.style.display = "none";
     }
     // Dropdown queries
@@ -210,7 +214,7 @@ function hideAdvancedSearchQueries(queriesToKeep) {
         var _a, _b;
         const items = document.querySelectorAll("table.topsearch_queryselector_item");
         for (const item of Array.from(items !== null && items !== void 0 ? items : [])) {
-            if (!queriesToKeep.has((_b = (_a = item.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : ""))
+            if (queriesToHide.has((_b = (_a = item.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : ""))
                 item.style.display = "none";
         }
     });
@@ -222,8 +226,8 @@ function addAutoCompleteButtons(methodButtons) {
         return;
     const buttonsDiv = document.createElement("div");
     buttonsDiv.style.marginTop = "5px";
-    buttonsDiv.style.display = "flex";
-    buttonsDiv.style.flexWrap = "wrap";
+    buttonsDiv.style.display = "grid";
+    buttonsDiv.style.gridTemplateColumns = "1fr 1fr";
     buttonsDiv.style.gap = "5px";
     const buttons = document.createDocumentFragment();
     for (const buttonText of methodButtons) {
@@ -241,4 +245,29 @@ function addAutoCompleteButtons(methodButtons) {
     }
     buttonsDiv.append(buttons);
     searchDiv.append(buttonsDiv);
+}
+function addSubmissionFormLinks() {
+    var _a, _b;
+    const titleRows = document.querySelectorAll("tr>.list_grouptitle:nth-child(2)");
+    if (!titleRows)
+        return;
+    const externalLinkImage = `<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="14" height="14" viewBox="0 0 24 24" stroke-width="1.25" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" /><line x1="10" y1="14" x2="20" y2="4" /><polyline points="15 4 20 4 20 9" /></svg>`;
+    const linkInitial = `https://${window.location.host}/labservices/rc?command=ViewAttachment&sdcid=Submission&keyid1=`;
+    const linkFinal = "&keyid2=(null)&keyid3=(null)&attachmentnum=1";
+    const submissionRegex = /\d{2}-\d{6}/;
+    const spanStyle = "border: 1px solid  #999; padding: 0 3px; border-radius: 3px; margin-left: 35px; background: #eed; filter: opacity(0.65); display: inline";
+    const linkStyle = "font-weight: normal; color: #000; letter-spacing: normal; display: inline-flex; align-items: center; gap: 2px;";
+    for (const row of titleRows) {
+        const submissionID = (_b = submissionRegex.exec((_a = row.textContent) !== null && _a !== void 0 ? _a : "")) === null || _b === void 0 ? void 0 : _b[0];
+        const submissionLinkDiv = document.createElement("div");
+        submissionLinkDiv.setAttribute("style", spanStyle);
+        const submissionLink = document.createElement("a");
+        submissionLink.href = linkInitial + submissionID + linkFinal;
+        submissionLink.setAttribute("style", linkStyle);
+        submissionLink.innerHTML = `Submission Form ${externalLinkImage}`;
+        submissionLink.target = "_blank";
+        submissionLink.title = "Open Submission Form in new tab";
+        submissionLinkDiv.append(submissionLink);
+        row.append(submissionLinkDiv);
+    }
 }
