@@ -129,14 +129,10 @@
     ];
     /* END OF OPTIONS */
     if (document.body.id === "layoutbody") {
+        // Hijack the main loader to prettify the spinner
         (_a = window.top) === null || _a === void 0 ? void 0 : _a.addEventListener("load", () => {
-            var _a;
-            const spinner = (_a = window.top) === null || _a === void 0 ? void 0 : _a.document.querySelector("img[src='WEB-CORE/images/spinners/bluetone.gif']");
-            if (!spinner)
-                return;
-            spinner.src = "https://svgshare.com/i/Ri2.svg";
-            spinner.style.width = "176px";
-            spinner.style.height = "176px";
+            // No option for this because everyone wants it.
+            upgradeAwfulUglySpinner();
         });
     }
     if (((_b = window.self.frameElement) === null || _b === void 0 ? void 0 : _b.id) === "_nav_frame1") {
@@ -253,14 +249,12 @@ function addAutoCompleteButtons(methodButtons) {
     if (!searchDiv)
         return;
     const buttonsDiv = document.createElement("div");
-    buttonsDiv.style.marginTop = "5px";
-    buttonsDiv.style.display = "grid";
-    buttonsDiv.style.gridTemplateColumns = "1fr 1fr";
-    buttonsDiv.style.gap = "5px";
+    buttonsDiv.setAttribute("style", "width: 85%; margin-top: 5px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;");
     const buttons = document.createDocumentFragment();
     for (const buttonText of methodButtons) {
         const newButton = document.createElement("button");
         newButton.textContent = buttonText;
+        newButton.setAttribute("style", "padding: 0 3px; white-space: nowrap;");
         newButton.addEventListener("click", () => {
             const searchInput = searchDiv.querySelector("input");
             const searchSubmit = searchDiv.querySelector("table.button_modern");
@@ -313,4 +307,13 @@ function addFastgridLinks() {
         div.textContent = "";
         div.append(submissionLink);
     }
+}
+function upgradeAwfulUglySpinner() {
+    var _a;
+    const spinner = (_a = window.top) === null || _a === void 0 ? void 0 : _a.document.querySelector("img[src='WEB-CORE/images/spinners/bluetone.gif']");
+    if (!spinner)
+        return;
+    spinner.src = "https://svgshare.com/i/Ri2.svg";
+    spinner.style.width = "176px";
+    spinner.style.height = "176px";
 }

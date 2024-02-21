@@ -136,16 +136,10 @@
   /* END OF OPTIONS */
 
   if (document.body.id === "layoutbody") {
+    // Hijack the main loader to prettify the spinner
     window.top?.addEventListener("load", () => {
-      const spinner = window.top?.document.querySelector(
-        "img[src='WEB-CORE/images/spinners/bluetone.gif']"
-      ) as HTMLImageElement | null;
-
-      if (!spinner) return;
-
-      spinner.src = "https://svgshare.com/i/Ri2.svg";
-      spinner.style.width = "176px";
-      spinner.style.height = "176px";
+      // No option for this because everyone wants it.
+      upgradeAwfulUglySpinner();
     });
   }
 
@@ -287,16 +281,18 @@ function addAutoCompleteButtons(methodButtons: string[]) {
   if (!searchDiv) return;
 
   const buttonsDiv = document.createElement("div");
-  buttonsDiv.style.marginTop = "5px";
-  buttonsDiv.style.display = "grid";
-  buttonsDiv.style.gridTemplateColumns = "1fr 1fr";
-  buttonsDiv.style.gap = "5px";
+  buttonsDiv.setAttribute(
+    "style",
+    "width: 85%; margin-top: 5px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;"
+  );
 
   const buttons = document.createDocumentFragment();
 
   for (const buttonText of methodButtons) {
     const newButton = document.createElement("button");
     newButton.textContent = buttonText;
+    newButton.setAttribute("style", "padding: 0 3px; white-space: nowrap;");
+
     newButton.addEventListener("click", () => {
       const searchInput = searchDiv.querySelector(
         "input"
@@ -308,6 +304,7 @@ function addAutoCompleteButtons(methodButtons: string[]) {
       searchInput.value = buttonText;
       searchSubmit?.click();
     });
+
     buttons.appendChild(newButton);
   }
 
@@ -372,4 +369,16 @@ function addFastgridLinks() {
 
     div.append(submissionLink);
   }
+}
+
+function upgradeAwfulUglySpinner() {
+  const spinner = window.top?.document.querySelector(
+    "img[src='WEB-CORE/images/spinners/bluetone.gif']"
+  ) as HTMLImageElement | null;
+
+  if (!spinner) return;
+
+  spinner.src = "https://svgshare.com/i/Ri2.svg";
+  spinner.style.width = "176px";
+  spinner.style.height = "176px";
 }
