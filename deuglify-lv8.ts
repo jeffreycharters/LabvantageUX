@@ -135,6 +135,20 @@
 
   /* END OF OPTIONS */
 
+  if (document.body.id === "layoutbody") {
+    window.top?.addEventListener("load", () => {
+      const spinner = window.top?.document.querySelector(
+        "img[src='WEB-CORE/images/spinners/bluetone.gif']"
+      ) as HTMLImageElement | null;
+
+      if (!spinner) return;
+
+      spinner.src = "https://svgshare.com/i/Ri2.svg";
+      spinner.style.width = "176px";
+      spinner.style.height = "176px";
+    });
+  }
+
   if (window.self.frameElement?.id === "_nav_frame1") {
     /* WELCOME TO THE NAVFRAME                                            */
     /* This starts below the "receive sample | create worklist | ..." row */

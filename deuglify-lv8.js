@@ -11,7 +11,7 @@
 // ==/UserScript==
 (function () {
     /* OPTIONS */
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     // Rainbow mode
     const rainbowMode = false;
     // Submission Form links
@@ -128,7 +128,18 @@
         "column42",
     ];
     /* END OF OPTIONS */
-    if (((_a = window.self.frameElement) === null || _a === void 0 ? void 0 : _a.id) === "_nav_frame1") {
+    if (document.body.id === "layoutbody") {
+        (_a = window.top) === null || _a === void 0 ? void 0 : _a.addEventListener("load", () => {
+            var _a;
+            const spinner = (_a = window.top) === null || _a === void 0 ? void 0 : _a.document.querySelector("img[src='WEB-CORE/images/spinners/bluetone.gif']");
+            if (!spinner)
+                return;
+            spinner.src = "https://svgshare.com/i/Ri2.svg";
+            spinner.style.width = "176px";
+            spinner.style.height = "176px";
+        });
+    }
+    if (((_b = window.self.frameElement) === null || _b === void 0 ? void 0 : _b.id) === "_nav_frame1") {
         /* WELCOME TO THE NAVFRAME                                            */
         /* This starts below the "receive sample | create worklist | ..." row */
         console.log("Doing navFrame Stuff");
@@ -143,7 +154,7 @@
         });
         return;
     }
-    if (((_b = window.self.frameElement) === null || _b === void 0 ? void 0 : _b.id) === "list_iframe") {
+    if (((_c = window.self.frameElement) === null || _c === void 0 ? void 0 : _c.id) === "list_iframe") {
         /* WELCOME TO THE LISTIFRAME            */
         /* This contains the sample list tables */
         console.log("Doing listIFrame Stuff");
@@ -155,7 +166,7 @@
             addSubmissionFormLinks();
         return;
     }
-    if (((_c = window.self.frameElement) === null || _c === void 0 ? void 0 : _c.id) === "rightframe") {
+    if (((_d = window.self.frameElement) === null || _d === void 0 ? void 0 : _d.id) === "rightframe") {
         /* WELCOME TO THE RIGHTFRAME            */
         /* This contains the fastgrid tables    */
         console.log("Doing FASTGRID Stuff");
