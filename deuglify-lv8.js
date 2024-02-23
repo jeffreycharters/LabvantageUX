@@ -10,123 +10,130 @@
 // @grant        none
 // ==/UserScript==
 (function () {
+    var _a, _b, _c, _d, _e;
     /* OPTIONS */
-    var _a, _b, _c, _d;
-    // Rainbow mode
-    const rainbowMode = false;
-    // Submission Form links
-    const submissionFormLinks = true;
-    const fastgridLinks = true;
-    // Easy Method Select Mode
-    const easyMethodSelectMode = true;
-    const methodButtons = [
-        "CHEM-055",
-        "CHEM-057",
-        "CHEM-114",
-        "CHEM-162",
-        "CHEM-354",
-        "TOXI-064",
-    ];
-    // Manage Page Advanced Search Queries to remove
-    // Comment out a line to show the query.
-    const manageQueriesToHide = new Set([
-        "By Creation Date",
-        "By Status",
-        "TodaysSamples",
-        "AHL Link# samples",
-        "Bacteriology Counts",
-        "Bees to Test",
-        "CFIA Sa_Cult Isolate",
-        "CFIA to Test",
-        "CompletedbyParam",
-        "CompletedbyParamList",
-        "CompletedbyTestUser",
-        // "Data In Progress Short...",
-        // "Data entered Short code",
-        "FM samples more than 1...",
-        "FM samples more than 14 days",
-        "Milk to Test",
-        // "Need approval Short code",
-        // "NeedApproval",
-        "NeedApproval Extern",
-        "NeedsApprovalCFIAPBS",
-        "OMAFRA_SamplesByDate",
-        // "Result level > or < value",
-        "SN - Combustion",
-        "Sample To Dispose",
-        "Sample Type by Date",
-        "Sample by Group",
-        // "Sample by Short Code",
-        // "Sample by Test",
-        "Sample by resultvalu",
-        // "SampleAnimalClientID",
-        // "SampleBySubmission",
-        "SampleByVTH Hosp#",
-        "SampleInProgress#day",
-        "SampleSpeciesbyresultv...",
-        "SampleSpeciesbyresultvalue",
-        "SampleToTest NO OMAF",
-        // "SampleToTest OMAFRA",
-        "SampleVTHAccessionID",
-        "SamplebySingleTest",
-        // "Samples To Test",
-        // "Samples Worklist ID",
-        "Samples by Method ID",
-        // "Samples by Method ID R...",
-        "SamplesByEmpVet",
-        "SamplesByFarm",
-        // "SamplesByInvoice#",
-        // "SamplesByOwner",
-        "SamplesByPremiseID",
-        "SamplesByProducer",
-        // "SamplesByProject",
-        "SamplesForClient",
-        "SamplesInStorage",
-        // "SamplesTo Test ALL",
-        "SamplesWithHolds",
-        // "Short Code DateRange",
-        // "SubmitterCaseNumber",
-        // "TOXI - Inorganic",
-        // "TOXI - Organic",
-        "Test date to Test",
-        "TestsByClient",
-        "To Test by Labsect",
-    ]);
-    // Receive Page Advanced Search Queries to remove
-    // Comment out a line to show the query.
-    const receiveQueriesToHide = new Set([
-        // "Rush Samples To Receive",
-        // "All Feeds to Receive",
-        // "AllSamplesToReceive",
-        "Bees to Receive",
-        // "CFIA to receive",
-        "GLP to Receive",
-        "QE0587 to Receive",
-        "QE0843 to Receive",
-        // "Receive by Project",
-        "SampleBySubmission",
-        // "SamplesForClient",
-        // "SamplesReceiveDate",
-        // "SamplestoReceiveLS",
-        "Test date reached",
-        // "TodaysSamplesToRec",
-    ]);
-    // Cleaning up clutter
-    const removeExtraColumns = true;
-    const headingsToRemove = [
-        "list_header3",
-        "list_header13",
-        "list_header14",
-        "list_header19",
-        "list_header20",
-    ];
-    const cellsToRemove = [
-        "column43",
-        "Sampling Date",
-        "Due Date",
-        "Incident link",
-        "column42",
-    ];
+    const options = {
+        // Rainbow mode
+        rainbowMode: false,
+        // Submission Form links
+        submissionFormLinks: true,
+        fastgridLinks: true,
+        // Enable toxi-centric options
+        toxiUpgrades: {
+            idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
+            iconifyLocations: true, // receive page location simplified and upgrade Kemptville obviousness
+        },
+        // Easy Method Select Mode
+        easyMethodSelectMode: true,
+        methodButtons: [
+            "CHEM-055",
+            "CHEM-057",
+            "CHEM-114",
+            "CHEM-162",
+            "CHEM-354",
+            "TOXI-064",
+        ],
+        // Manage Page Advanced Search Queries to remove
+        // Comment out a line to show the query.
+        manageQueriesToHide: new Set([
+            "By Creation Date",
+            "By Status",
+            "TodaysSamples",
+            "AHL Link# samples",
+            "Bacteriology Counts",
+            "Bees to Test",
+            "CFIA Sa_Cult Isolate",
+            "CFIA to Test",
+            "CompletedbyParam",
+            "CompletedbyParamList",
+            "CompletedbyTestUser",
+            // "Data In Progress Short...",
+            // "Data entered Short code",
+            "FM samples more than 1...",
+            "FM samples more than 14 days",
+            "Milk to Test",
+            // "Need approval Short code",
+            // "NeedApproval",
+            "NeedApproval Extern",
+            "NeedsApprovalCFIAPBS",
+            "OMAFRA_SamplesByDate",
+            // "Result level > or < value",
+            "SN - Combustion",
+            "Sample To Dispose",
+            "Sample Type by Date",
+            "Sample by Group",
+            // "Sample by Short Code",
+            // "Sample by Test",
+            "Sample by resultvalu",
+            // "SampleAnimalClientID",
+            // "SampleBySubmission",
+            "SampleByVTH Hosp#",
+            "SampleInProgress#day",
+            "SampleSpeciesbyresultv...",
+            "SampleSpeciesbyresultvalue",
+            "SampleToTest NO OMAF",
+            // "SampleToTest OMAFRA",
+            "SampleVTHAccessionID",
+            "SamplebySingleTest",
+            // "Samples To Test",
+            // "Samples Worklist ID",
+            "Samples by Method ID",
+            // "Samples by Method ID R...",
+            "SamplesByEmpVet",
+            "SamplesByFarm",
+            // "SamplesByInvoice#",
+            // "SamplesByOwner",
+            "SamplesByPremiseID",
+            "SamplesByProducer",
+            // "SamplesByProject",
+            "SamplesForClient",
+            "SamplesInStorage",
+            // "SamplesTo Test ALL",
+            "SamplesWithHolds",
+            // "Short Code DateRange",
+            // "SubmitterCaseNumber",
+            // "TOXI - Inorganic",
+            // "TOXI - Organic",
+            "Test date to Test",
+            "TestsByClient",
+            "To Test by Labsect",
+        ]),
+        // Receive Page Advanced Search Queries to remove
+        // Comment out a line to show the query.
+        receiveQueriesToHide: new Set([
+            // "Rush Samples To Receive",
+            // "All Feeds to Receive",
+            // "AllSamplesToReceive",
+            "Bees to Receive",
+            // "CFIA to receive",
+            "GLP to Receive",
+            "QE0587 to Receive",
+            "QE0843 to Receive",
+            // "Receive by Project",
+            "SampleBySubmission",
+            // "SamplesForClient",
+            // "SamplesReceiveDate",
+            // "SamplestoReceiveLS",
+            "Test date reached",
+            // "TodaysSamplesToRec",
+        ]),
+        // Cleaning up clutter
+        removeExtraColumns: true,
+        headingsToRemove: [
+            "list_header3",
+            "list_header13",
+            "list_header14",
+            "list_header19",
+            "list_header20",
+        ],
+        cellsToRemove: [
+            "column43",
+            "Sampling Date",
+            "Due Date",
+            "Incident link",
+            "column42",
+        ],
+    };
     /* END OF OPTIONS */
     if (document.body.id === "layoutbody") {
         // Hijack the main loader to prettify the spinner
@@ -138,31 +145,39 @@
     if (((_b = window.self.frameElement) === null || _b === void 0 ? void 0 : _b.id) === "_nav_frame1") {
         /* WELCOME TO THE NAVFRAME                                            */
         /* This starts below the "receive sample | create worklist | ..." row */
-        console.log("Doing navFrame Stuff");
         window.addEventListener("load", () => {
-            if (easyMethodSelectMode)
-                addAutoCompleteButtons(methodButtons);
+            if (options.easyMethodSelectMode)
+                addAutoCompleteButtons(options.methodButtons);
             const onReceivePage = Boolean(document.getElementById("Receive"));
-            if (onReceivePage)
-                hideAdvancedSearchQueries(receiveQueriesToHide);
+            if (onReceivePage) {
+                if (options.toxiUpgrades.iconifyLocations)
+                    iconifyLocations();
+                hideAdvancedSearchQueries(options.receiveQueriesToHide);
+            }
             else
-                hideAdvancedSearchQueries(manageQueriesToHide);
+                hideAdvancedSearchQueries(options.manageQueriesToHide);
         });
         return;
     }
     if (((_c = window.self.frameElement) === null || _c === void 0 ? void 0 : _c.id) === "list_iframe") {
         /* WELCOME TO THE LISTIFRAME            */
         /* This contains the sample list tables */
-        console.log("Doing listIFrame Stuff");
-        if (removeExtraColumns)
-            removeColumns(headingsToRemove, cellsToRemove);
-        if (rainbowMode)
+        if (options.removeExtraColumns)
+            removeColumns(options.headingsToRemove, options.cellsToRemove);
+        if (options.rainbowMode)
             activateRainbowMode();
-        if (submissionFormLinks)
+        if (options.submissionFormLinks)
             addSubmissionFormLinks();
+        const onReceivePage = (_d = document.location.search) === null || _d === void 0 ? void 0 : _d.includes("Receive");
+        if (onReceivePage) {
+            if (options.toxiUpgrades.iconifyLocations)
+                iconifyLocations();
+        }
+        if (!onReceivePage && options.toxiUpgrades.idexxMod)
+            addUncheckIdexxButton();
         return;
     }
-    if (((_d = window.self.frameElement) === null || _d === void 0 ? void 0 : _d.id) === "rightframe") {
+    if (((_e = window.self.frameElement) === null || _e === void 0 ? void 0 : _e.id) === "rightframe") {
         /* WELCOME TO THE RIGHTFRAME            */
         /* This contains the fastgrid tables    */
         console.log("Doing FASTGRID Stuff");
@@ -175,6 +190,9 @@
         });
         observer.observe(window.document.body, { childList: true, subtree: true });
         return;
+    }
+    if (document.getElementById("searchtext")) {
+        console.log("add remove extra versions from specifications!");
     }
     // create date width fix
     const dateHeader = document.getElementById("list_header12");
@@ -293,8 +311,8 @@ function addSubmissionFormLinks() {
 }
 function addFastgridLinks() {
     var _a, _b, _c;
-    const submissionDivs = document.querySelectorAll("table.dataentry2-gridheader td:first-child div.dataentry2-rowheaderdiv:first-child > .gwt-HTML");
     const submissionRegex = /\d{2}-\d{6}/;
+    const submissionDivs = document.querySelectorAll("table.dataentry2-gridheader td:first-child div.dataentry2-rowheaderdiv:first-child > .gwt-HTML");
     for (const div of submissionDivs !== null && submissionDivs !== void 0 ? submissionDivs : []) {
         const submissionID = (_b = submissionRegex.exec((_a = div.textContent) !== null && _a !== void 0 ? _a : "")) === null || _b === void 0 ? void 0 : _b[0];
         if (!submissionID)
@@ -316,4 +334,67 @@ function upgradeAwfulUglySpinner() {
     spinner.src = "https://svgshare.com/i/Ri2.svg";
     spinner.style.width = "176px";
     spinner.style.height = "176px";
+}
+function iconifyLocations() {
+    const rows = document.querySelectorAll("#list_list [class^=list_tablerow]");
+    if (!rows)
+        return;
+    rows.forEach((row) => {
+        row.childNodes.forEach((cell) => {
+            if (cell.textContent === "In Transit from AHL to AFL")
+                cell.textContent = "AHL ➜ AFL";
+            if (cell.textContent === "In Transit from Kemptville to AHL")
+                cell.textContent = "Kemptville ➜ AFL";
+            if (cell.textContent === "K") {
+                cell.style.fontWeight = "800";
+                cell.style.color = "hsl(40, 100%, 45%)";
+                const animalNameColumn = 7;
+                const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
+                row.childNodes[animalNameColumn].innerHTML =
+                    row.childNodes[animalNameColumn].textContent +
+                        ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
+            }
+        });
+    });
+}
+const idexxButtonfunctions = {
+    addRemoveIdexxButton: () => {
+        var _a;
+        const button = document.createElement("button");
+        button.textContent = "Uncheck Idexx";
+        button.id = "remove-idexx-button";
+        button.setAttribute("style", "padding: 0 0.2rem; font-size: 0.75rem; transition: opacity 0.2s ease-out;");
+        button.addEventListener("click", idexxButtonfunctions.uncheckIdexxInputs);
+        const advancedSearch = document.querySelector("select#groupbycolumns");
+        (_a = advancedSearch === null || advancedSearch === void 0 ? void 0 : advancedSearch.parentNode) === null || _a === void 0 ? void 0 : _a.append(button);
+    },
+    removeRemoveIdexxButton: () => {
+        const removeIdexxButton = document.querySelector("#remove-idexx-button");
+        if (removeIdexxButton) {
+            removeIdexxButton.addEventListener("transitionend", () => removeIdexxButton.remove());
+            removeIdexxButton.style.opacity = "0";
+        }
+    },
+    uncheckIdexxInputs: () => {
+        var _a;
+        const submissionRows = document.querySelectorAll("[class^=list_tablerow]");
+        const selectors = document.getElementsByName("selector");
+        for (let i = 0; i < submissionRows.length; ++i) {
+            const submissionSource = submissionRows[i].childNodes[11];
+            if ((_a = submissionSource.textContent) === null || _a === void 0 ? void 0 : _a.includes("IDEXX")) {
+                selectors[i].click();
+            }
+        }
+    },
+};
+function addUncheckIdexxButton() {
+    const selectAllInput = document.querySelector("#headerselector1");
+    selectAllInput === null || selectAllInput === void 0 ? void 0 : selectAllInput.addEventListener("click", () => {
+        if (selectAllInput.checked) {
+            idexxButtonfunctions.addRemoveIdexxButton();
+        }
+        else {
+            idexxButtonfunctions.removeRemoveIdexxButton();
+        }
+    });
 }
