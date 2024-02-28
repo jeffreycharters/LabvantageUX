@@ -19,6 +19,9 @@
     submissionFormLinks: true,
     fastgridLinks: true,
 
+    // Truncate notes so they don't take up too much space
+    truncateNotes: true,
+
     // Enable toxi-centric options
     toxiUpgrades: {
       idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
@@ -144,8 +147,8 @@
 
   if (document.body.id === "layoutbody") {
     // Hijack the main loader to prettify the spinner
+    // No option for this because everyone wants it.
     window.top?.addEventListener("load", () => {
-      // No option for this because everyone wants it.
       upgradeAwfulUglySpinner();
     });
   }
@@ -170,12 +173,11 @@
   if (window.self.frameElement?.id === "list_iframe") {
     /* WELCOME TO THE LISTIFRAME            */
     /* This contains the sample list tables */
-    if (options.removeExtraColumns)
-      removeColumns(options.headingsToRemove, options.cellsToRemove);
-
     if (options.rainbowMode) activateRainbowMode();
 
     if (options.submissionFormLinks) addSubmissionFormLinks();
+
+    if (options.truncateNotes) truncateNotes();
 
     const onReceivePage = document.location.search?.includes("Receive");
 
@@ -186,14 +188,15 @@
     if (!onReceivePage && options.toxiUpgrades.idexxMod)
       addUncheckIdexxButton();
 
+    if (!onReceivePage && options.removeExtraColumns)
+      removeColumns(options.headingsToRemove, options.cellsToRemove);
+
     return;
   }
 
   if (window.self.frameElement?.id === "rightframe") {
     /* WELCOME TO THE RIGHTFRAME            */
     /* This contains the fastgrid tables    */
-    console.log("Doing FASTGRID Stuff");
-
     const observer = new MutationObserver((_mutations, observer) => {
       const submissionDivs = document.querySelectorAll(
         "div.dataentry2-rowheaderdiv:first-child > .gwt-HTML"
@@ -480,4 +483,24 @@ function addUncheckIdexxButton() {
       idexxButtonfunctions.removeRemoveIdexxButton();
     }
   });
+}
+
+function truncateNotes() {
+  const rows = document.querySelectorAll(
+    "tr[class^=list_tablerow]"
+  ) as NodeListOf<HTMLTableRowElement>;
+
+  for (const row of rows) {
+    const notesCell = row.querySelector(
+      "#column40"
+    ) as HTMLTableCellElement | null;
+    if (!notesCell) continue;
+
+    notesCell.style.maxWidth = "10rem";
+    notesCell.style.whiteSpace = "nowrap";
+    notesCell.style.overflow = "hidden";
+    notesCell.style.textOverflow = "ellipsis";
+
+    notesCell.setAttribute("title", notesCell.textContent ?? "");
+  }
 }

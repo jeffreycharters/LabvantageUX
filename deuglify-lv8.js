@@ -18,6 +18,8 @@
         // Submission Form links
         submissionFormLinks: true,
         fastgridLinks: true,
+        // Truncate notes so they don't take up too much space
+        truncateNotes: true,
         // Enable toxi-centric options
         toxiUpgrades: {
             idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
@@ -137,8 +139,8 @@
     /* END OF OPTIONS */
     if (document.body.id === "layoutbody") {
         // Hijack the main loader to prettify the spinner
+        // No option for this because everyone wants it.
         (_a = window.top) === null || _a === void 0 ? void 0 : _a.addEventListener("load", () => {
-            // No option for this because everyone wants it.
             upgradeAwfulUglySpinner();
         });
     }
@@ -162,12 +164,12 @@
     if (((_c = window.self.frameElement) === null || _c === void 0 ? void 0 : _c.id) === "list_iframe") {
         /* WELCOME TO THE LISTIFRAME            */
         /* This contains the sample list tables */
-        if (options.removeExtraColumns)
-            removeColumns(options.headingsToRemove, options.cellsToRemove);
         if (options.rainbowMode)
             activateRainbowMode();
         if (options.submissionFormLinks)
             addSubmissionFormLinks();
+        if (options.truncateNotes)
+            truncateNotes();
         const onReceivePage = (_d = document.location.search) === null || _d === void 0 ? void 0 : _d.includes("Receive");
         if (onReceivePage) {
             if (options.toxiUpgrades.iconifyLocations)
@@ -175,12 +177,13 @@
         }
         if (!onReceivePage && options.toxiUpgrades.idexxMod)
             addUncheckIdexxButton();
+        if (!onReceivePage && options.removeExtraColumns)
+            removeColumns(options.headingsToRemove, options.cellsToRemove);
         return;
     }
     if (((_e = window.self.frameElement) === null || _e === void 0 ? void 0 : _e.id) === "rightframe") {
         /* WELCOME TO THE RIGHTFRAME            */
         /* This contains the fastgrid tables    */
-        console.log("Doing FASTGRID Stuff");
         const observer = new MutationObserver((_mutations, observer) => {
             const submissionDivs = document.querySelectorAll("div.dataentry2-rowheaderdiv:first-child > .gwt-HTML");
             if (submissionDivs.length > 0) {
@@ -397,4 +400,18 @@ function addUncheckIdexxButton() {
             idexxButtonfunctions.removeRemoveIdexxButton();
         }
     });
+}
+function truncateNotes() {
+    var _a;
+    const rows = document.querySelectorAll("tr[class^=list_tablerow]");
+    for (const row of rows) {
+        const notesCell = row.querySelector("#column40");
+        if (!notesCell)
+            continue;
+        notesCell.style.maxWidth = "10rem";
+        notesCell.style.whiteSpace = "nowrap";
+        notesCell.style.overflow = "hidden";
+        notesCell.style.textOverflow = "ellipsis";
+        notesCell.setAttribute("title", (_a = notesCell.textContent) !== null && _a !== void 0 ? _a : "");
+    }
 }
