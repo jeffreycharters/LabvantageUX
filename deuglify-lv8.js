@@ -164,6 +164,11 @@
     if (((_c = window.self.frameElement) === null || _c === void 0 ? void 0 : _c.id) === "list_iframe") {
         /* WELCOME TO THE LISTIFRAME            */
         /* This contains the sample list tables */
+        // If on the specifications lookup page, remove old versions
+        if (document.location.toString().includes("SpecLookup")) {
+            removeExtraSpecifications();
+            return;
+        }
         if (options.rainbowMode)
             activateRainbowMode();
         if (options.submissionFormLinks)
@@ -193,9 +198,6 @@
         });
         observer.observe(window.document.body, { childList: true, subtree: true });
         return;
-    }
-    if (document.getElementById("searchtext")) {
-        console.log("add remove extra versions from specifications!");
     }
     // create date width fix
     const dateHeader = document.getElementById("list_header12");
@@ -412,6 +414,36 @@ function truncateNotes() {
         notesCell.style.whiteSpace = "nowrap";
         notesCell.style.overflow = "hidden";
         notesCell.style.textOverflow = "ellipsis";
+        notesCell.style.color = "red";
         notesCell.setAttribute("title", (_a = notesCell.textContent) !== null && _a !== void 0 ? _a : "");
+    }
+}
+function removeExtraSpecifications() {
+    var _a, _b, _c, _d, _e, _f;
+    const rows = document.querySelectorAll("#list_tablebody tr");
+    if (!rows)
+        return;
+    const versions = new Map();
+    for (const row of rows) {
+        const specification = (_a = row.childNodes[3]) === null || _a === void 0 ? void 0 : _a.textContent;
+        const version = Number((_b = row.childNodes[5]) === null || _b === void 0 ? void 0 : _b.textContent);
+        if (!specification || !version)
+            continue;
+        if (versions.has(specification)) {
+            if (versions.get(specification) > version)
+                continue;
+        }
+        versions.set(specification, version);
+    }
+    for (const row of rows) {
+        const specification = (_c = row.childNodes[3]) === null || _c === void 0 ? void 0 : _c.textContent;
+        const version = Number((_d = row.childNodes[5]) === null || _d === void 0 ? void 0 : _d.textContent);
+        if (!specification || !version)
+            continue;
+        const maxVersion = versions.get(specification);
+        if (version != maxVersion ||
+            ((_f = (_e = row.childNodes[4]) === null || _e === void 0 ? void 0 : _e.textContent) === null || _f === void 0 ? void 0 : _f.toLowerCase().includes("do not use"))) {
+            row.style.display = "none";
+        }
     }
 }

@@ -173,6 +173,13 @@
   if (window.self.frameElement?.id === "list_iframe") {
     /* WELCOME TO THE LISTIFRAME            */
     /* This contains the sample list tables */
+
+    // If on the specifications lookup page, remove old versions
+    if (document.location.toString().includes("SpecLookup")) {
+      removeExtraSpecifications();
+      return;
+    }
+
     if (options.rainbowMode) activateRainbowMode();
 
     if (options.submissionFormLinks) addSubmissionFormLinks();
@@ -211,10 +218,6 @@
     observer.observe(window.document.body, { childList: true, subtree: true });
 
     return;
-  }
-
-  if (document.getElementById("searchtext")) {
-    console.log("add remove extra versions from specifications!");
   }
 
   // create date width fix
@@ -500,7 +503,44 @@ function truncateNotes() {
     notesCell.style.whiteSpace = "nowrap";
     notesCell.style.overflow = "hidden";
     notesCell.style.textOverflow = "ellipsis";
+    notesCell.style.color = "red";
 
     notesCell.setAttribute("title", notesCell.textContent ?? "");
+  }
+}
+
+function removeExtraSpecifications() {
+  const rows = document.querySelectorAll(
+    "#list_tablebody tr"
+  ) as NodeListOf<HTMLTableRowElement>;
+  if (!rows) return;
+
+  const versions = new Map<string, number>();
+
+  for (const row of rows) {
+    const specification = row.childNodes[3]?.textContent;
+    const version = Number(row.childNodes[5]?.textContent);
+
+    if (!specification || !version) continue;
+
+    if (versions.has(specification)) {
+      if (versions.get(specification)! > version) continue;
+    }
+
+    versions.set(specification, version);
+  }
+
+  for (const row of rows) {
+    const specification = row.childNodes[3]?.textContent;
+    const version = Number(row.childNodes[5]?.textContent);
+    if (!specification || !version) continue;
+
+    const maxVersion = versions.get(specification);
+    if (
+      version != maxVersion ||
+      row.childNodes[4]?.textContent?.toLowerCase().includes("do not use")
+    ) {
+      row.style.display = "none";
+    }
   }
 }
