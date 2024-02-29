@@ -509,6 +509,7 @@ function truncate(sampleIDs: boolean, notes: boolean) {
   ) as NodeListOf<HTMLTableRowElement>;
 
   // I'm sure this can be tidied up if you're bored
+  // also add "common name" as an option
   for (const row of rows) {
     if (sampleIDs) {
       const sampleIDCell = row.querySelector(
