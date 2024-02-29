@@ -23,6 +23,7 @@
     fastgridLinks: true,
 
     // Truncate notes so they don't take up too much space
+    truncateSampleIDs: true,
     truncateNotes: true,
 
     // Enable toxi-centric options
@@ -149,8 +150,8 @@
   /* END OF OPTIONS */
 
   if (
-    document.location.toString().includes("logon.jsp") &&
-    options.halloweenifyHolidays
+    options.halloweenifyHolidays &&
+    document.location.toString().includes("logon.jsp")
   ) {
     halloweenifyHolidays();
     return;
@@ -195,7 +196,8 @@
 
     if (options.submissionFormLinks) addSubmissionFormLinks();
 
-    if (options.truncateNotes) truncateNotes();
+    if (options.truncateNotes || options.truncateSampleIDs)
+      truncate(options.truncateSampleIDs, options.truncateNotes);
 
     const onReceivePage = document.location.search?.includes("Receive");
 
@@ -246,7 +248,7 @@ function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
     "#list_list th"
   ) as NodeListOf<HTMLTableCellElement> | null;
 
-  for (const header of Array.from(headers ?? [])) {
+  for (const header of headers ?? []) {
     if (headingsToRemove.includes(header.id)) {
       header.style.display = "none";
     }
@@ -255,7 +257,7 @@ function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
   const cells = document.querySelectorAll(
     "#list_list td"
   ) as NodeListOf<HTMLTableCellElement> | null;
-  for (const cell of Array.from(cells ?? [])) {
+  for (const cell of cells ?? []) {
     if (cellsToRemove.includes(cell.id)) {
       cell.style.display = "none";
     }
@@ -265,21 +267,19 @@ function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
 /* RAINBOW MODE!!! */
 function activateRainbowMode() {
   // These next few lines make the Submission Header rows less ugly
-  const rows = Array.from(
-    document.querySelectorAll("tr.list_grouptitle") ?? []
-  );
+  const rows = document.querySelectorAll("tr.list_grouptitle");
 
-  for (const row of rows) {
+  for (const row of rows ?? []) {
     const tds = (Array.from(row.children) ?? []) as HTMLTableCellElement[];
+    const styles = [
+      "orange",
+      "linear-gradient(to right, orange , yellow, green, cyan, blue, violet)",
+    ];
+
     for (const [index, td] of tds.entries()) {
-      if (index === 0) {
-        td.style.background = "orange";
-      } else {
-        td.style.background =
-          "linear-gradient(to right, orange , yellow, green, cyan, blue, violet)";
-      }
       td.style.filter = "saturate(0.5)";
       td.style.fontSize = "90%";
+      td.style.background = styles[index % styles.length];
     }
   }
 }
@@ -290,6 +290,7 @@ function hideAdvancedSearchQueries(queriesToHide: Set<string>) {
   const queryList = document.querySelectorAll(
     "#querysearch_row tr"
   ) as NodeListOf<HTMLTableRowElement> | null;
+
   for (const query of queryList ?? []) {
     if (queriesToHide.has(query.textContent?.trim() ?? ""))
       query.style.display = "none";
@@ -304,7 +305,8 @@ function hideAdvancedSearchQueries(queriesToHide: Set<string>) {
     const items = document.querySelectorAll(
       "table.topsearch_queryselector_item"
     ) as NodeListOf<HTMLTableRowElement> | null;
-    for (const item of Array.from(items ?? [])) {
+
+    for (const item of items ?? []) {
       if (queriesToHide.has(item.textContent?.trim() ?? ""))
         item.style.display = "none";
     }
@@ -338,7 +340,9 @@ function addAutoCompleteButtons(methodButtons: string[]) {
       const searchSubmit = searchDiv.querySelector(
         "table.button_modern"
       ) as HTMLButtonElement | null;
+
       if (!searchInput) return;
+
       searchInput.value = buttonText;
       searchSubmit?.click();
     });
@@ -423,8 +427,10 @@ function upgradeAwfulUglySpinner() {
 
 function iconifyLocations() {
   const rows = document.querySelectorAll("#list_list [class^=list_tablerow]");
-
   if (!rows) return;
+
+  const animalNameColumn = 7;
+  const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
 
   rows.forEach((row) => {
     (row.childNodes as NodeListOf<HTMLTableCellElement>).forEach((cell) => {
@@ -435,8 +441,6 @@ function iconifyLocations() {
       if (cell.textContent === "K") {
         cell.style.fontWeight = "800";
         cell.style.color = "hsl(40, 100%, 45%)";
-        const animalNameColumn = 7;
-        const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
         (row.childNodes[animalNameColumn] as HTMLTableCellElement).innerHTML =
           row.childNodes[animalNameColumn].textContent +
           ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
@@ -499,24 +503,41 @@ function addUncheckIdexxButton() {
   });
 }
 
-function truncateNotes() {
+function truncate(sampleIDs: boolean, notes: boolean) {
   const rows = document.querySelectorAll(
     "tr[class^=list_tablerow]"
   ) as NodeListOf<HTMLTableRowElement>;
 
+  // I'm sure this can be tidied up if you're bored
   for (const row of rows) {
-    const notesCell = row.querySelector(
-      "#column40"
-    ) as HTMLTableCellElement | null;
-    if (!notesCell) continue;
+    if (sampleIDs) {
+      const sampleIDCell = row.querySelector(
+        "#column22"
+      ) as HTMLTableCellElement | null;
+      if (!sampleIDCell) continue;
 
-    notesCell.style.maxWidth = "10rem";
-    notesCell.style.whiteSpace = "nowrap";
-    notesCell.style.overflow = "hidden";
-    notesCell.style.textOverflow = "ellipsis";
-    notesCell.style.color = "red";
+      sampleIDCell.style.maxWidth = "10rem";
+      sampleIDCell.style.whiteSpace = "nowrap";
+      sampleIDCell.style.overflow = "hidden";
+      sampleIDCell.style.textOverflow = "ellipsis";
 
-    notesCell.setAttribute("title", notesCell.textContent ?? "");
+      sampleIDCell.setAttribute("title", sampleIDCell.textContent ?? "");
+    }
+
+    if (notes) {
+      const notesCell = row.querySelector(
+        "#column40"
+      ) as HTMLTableCellElement | null;
+      if (!notesCell) continue;
+
+      notesCell.style.maxWidth = "10rem";
+      notesCell.style.whiteSpace = "nowrap";
+      notesCell.style.overflow = "hidden";
+      notesCell.style.textOverflow = "ellipsis";
+      notesCell.style.color = "red";
+
+      notesCell.setAttribute("title", notesCell.textContent ?? "");
+    }
   }
 }
 
@@ -544,20 +565,22 @@ function removeExtraSpecifications() {
   for (const row of rows) {
     const specification = row.childNodes[3]?.textContent;
     const version = Number(row.childNodes[5]?.textContent);
+
     if (!specification || !version) continue;
 
     const maxVersion = versions.get(specification);
-    if (
-      version != maxVersion ||
-      row.childNodes[4]?.textContent?.toLowerCase().includes("do not use")
-    ) {
+    const containsDoNotUse = row.childNodes[4]?.textContent
+      ?.toLowerCase()
+      .includes("do not use");
+
+    if (version != maxVersion || containsDoNotUse) {
       row.style.display = "none";
     }
   }
 }
 
 function halloweenifyHolidays() {
-  // Look I hate this code so much that I take time out of each day to look at it
+  // Look I hate this function so much that I take time out of each day to look at it
   // and hate it, but until dexember rolls around I can't fix it properly. It works.
   const imgs = Array.from(document.getElementsByTagName("img"));
 

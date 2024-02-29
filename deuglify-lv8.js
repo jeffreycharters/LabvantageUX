@@ -21,6 +21,7 @@
         submissionFormLinks: true,
         fastgridLinks: true,
         // Truncate notes so they don't take up too much space
+        truncateSampleIDs: true,
         truncateNotes: true,
         // Enable toxi-centric options
         toxiUpgrades: {
@@ -139,8 +140,8 @@
         ],
     };
     /* END OF OPTIONS */
-    if (document.location.toString().includes("logon.jsp") &&
-        options.halloweenifyHolidays) {
+    if (options.halloweenifyHolidays &&
+        document.location.toString().includes("logon.jsp")) {
         halloweenifyHolidays();
         return;
     }
@@ -180,8 +181,8 @@
             activateRainbowMode();
         if (options.submissionFormLinks)
             addSubmissionFormLinks();
-        if (options.truncateNotes)
-            truncateNotes();
+        if (options.truncateNotes || options.truncateSampleIDs)
+            truncate(options.truncateSampleIDs, options.truncateNotes);
         const onReceivePage = (_d = document.location.search) === null || _d === void 0 ? void 0 : _d.includes("Receive");
         if (onReceivePage) {
             if (options.toxiUpgrades.iconifyLocations)
@@ -218,13 +219,13 @@
 /* CLEANING UP SAMPLE LIST UNUSED COLUMS */
 function removeColumns(headingsToRemove, cellsToRemove) {
     const headers = document.querySelectorAll("#list_list th");
-    for (const header of Array.from(headers !== null && headers !== void 0 ? headers : [])) {
+    for (const header of headers !== null && headers !== void 0 ? headers : []) {
         if (headingsToRemove.includes(header.id)) {
             header.style.display = "none";
         }
     }
     const cells = document.querySelectorAll("#list_list td");
-    for (const cell of Array.from(cells !== null && cells !== void 0 ? cells : [])) {
+    for (const cell of cells !== null && cells !== void 0 ? cells : []) {
         if (cellsToRemove.includes(cell.id)) {
             cell.style.display = "none";
         }
@@ -232,21 +233,19 @@ function removeColumns(headingsToRemove, cellsToRemove) {
 }
 /* RAINBOW MODE!!! */
 function activateRainbowMode() {
-    var _a, _b;
+    var _a;
     // These next few lines make the Submission Header rows less ugly
-    const rows = Array.from((_a = document.querySelectorAll("tr.list_grouptitle")) !== null && _a !== void 0 ? _a : []);
-    for (const row of rows) {
-        const tds = ((_b = Array.from(row.children)) !== null && _b !== void 0 ? _b : []);
+    const rows = document.querySelectorAll("tr.list_grouptitle");
+    for (const row of rows !== null && rows !== void 0 ? rows : []) {
+        const tds = ((_a = Array.from(row.children)) !== null && _a !== void 0 ? _a : []);
+        const styles = [
+            "orange",
+            "linear-gradient(to right, orange , yellow, green, cyan, blue, violet)",
+        ];
         for (const [index, td] of tds.entries()) {
-            if (index === 0) {
-                td.style.background = "orange";
-            }
-            else {
-                td.style.background =
-                    "linear-gradient(to right, orange , yellow, green, cyan, blue, violet)";
-            }
             td.style.filter = "saturate(0.5)";
             td.style.fontSize = "90%";
+            td.style.background = styles[index % styles.length];
         }
     }
 }
@@ -267,7 +266,7 @@ function hideAdvancedSearchQueries(queriesToHide) {
     dropdownDiv.addEventListener("click", () => {
         var _a, _b;
         const items = document.querySelectorAll("table.topsearch_queryselector_item");
-        for (const item of Array.from(items !== null && items !== void 0 ? items : [])) {
+        for (const item of items !== null && items !== void 0 ? items : []) {
             if (queriesToHide.has((_b = (_a = item.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : ""))
                 item.style.display = "none";
         }
@@ -351,6 +350,8 @@ function iconifyLocations() {
     const rows = document.querySelectorAll("#list_list [class^=list_tablerow]");
     if (!rows)
         return;
+    const animalNameColumn = 7;
+    const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
     rows.forEach((row) => {
         row.childNodes.forEach((cell) => {
             if (cell.textContent === "In Transit from AHL to AFL")
@@ -360,8 +361,6 @@ function iconifyLocations() {
             if (cell.textContent === "K") {
                 cell.style.fontWeight = "800";
                 cell.style.color = "hsl(40, 100%, 45%)";
-                const animalNameColumn = 7;
-                const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
                 row.childNodes[animalNameColumn].innerHTML =
                     row.childNodes[animalNameColumn].textContent +
                         ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
@@ -410,19 +409,32 @@ function addUncheckIdexxButton() {
         }
     });
 }
-function truncateNotes() {
-    var _a;
+function truncate(sampleIDs, notes) {
+    var _a, _b;
     const rows = document.querySelectorAll("tr[class^=list_tablerow]");
+    // I'm sure this can be tidied up if you're bored
     for (const row of rows) {
-        const notesCell = row.querySelector("#column40");
-        if (!notesCell)
-            continue;
-        notesCell.style.maxWidth = "10rem";
-        notesCell.style.whiteSpace = "nowrap";
-        notesCell.style.overflow = "hidden";
-        notesCell.style.textOverflow = "ellipsis";
-        notesCell.style.color = "red";
-        notesCell.setAttribute("title", (_a = notesCell.textContent) !== null && _a !== void 0 ? _a : "");
+        if (sampleIDs) {
+            const sampleIDCell = row.querySelector("#column22");
+            if (!sampleIDCell)
+                continue;
+            sampleIDCell.style.maxWidth = "10rem";
+            sampleIDCell.style.whiteSpace = "nowrap";
+            sampleIDCell.style.overflow = "hidden";
+            sampleIDCell.style.textOverflow = "ellipsis";
+            sampleIDCell.setAttribute("title", (_a = sampleIDCell.textContent) !== null && _a !== void 0 ? _a : "");
+        }
+        if (notes) {
+            const notesCell = row.querySelector("#column40");
+            if (!notesCell)
+                continue;
+            notesCell.style.maxWidth = "10rem";
+            notesCell.style.whiteSpace = "nowrap";
+            notesCell.style.overflow = "hidden";
+            notesCell.style.textOverflow = "ellipsis";
+            notesCell.style.color = "red";
+            notesCell.setAttribute("title", (_b = notesCell.textContent) !== null && _b !== void 0 ? _b : "");
+        }
     }
 }
 function removeExtraSpecifications() {
@@ -448,14 +460,14 @@ function removeExtraSpecifications() {
         if (!specification || !version)
             continue;
         const maxVersion = versions.get(specification);
-        if (version != maxVersion ||
-            ((_f = (_e = row.childNodes[4]) === null || _e === void 0 ? void 0 : _e.textContent) === null || _f === void 0 ? void 0 : _f.toLowerCase().includes("do not use"))) {
+        const containsDoNotUse = (_f = (_e = row.childNodes[4]) === null || _e === void 0 ? void 0 : _e.textContent) === null || _f === void 0 ? void 0 : _f.toLowerCase().includes("do not use");
+        if (version != maxVersion || containsDoNotUse) {
             row.style.display = "none";
         }
     }
 }
 function halloweenifyHolidays() {
-    // Look I hate this code so much that I take time out of each day to look at it
+    // Look I hate this function so much that I take time out of each day to look at it
     // and hate it, but until dexember rolls around I can't fix it properly. It works.
     const imgs = Array.from(document.getElementsByTagName("img"));
     const afl = imgs.filter((img) => img.src.endsWith("AFL.gif"))[0]
