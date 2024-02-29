@@ -15,6 +15,9 @@
     // Rainbow mode
     rainbowMode: false,
 
+    // Make festive holiday links Halloweenier
+    halloweenifyHolidays: true,
+
     // Submission Form links
     submissionFormLinks: true,
     fastgridLinks: true,
@@ -144,6 +147,14 @@
   };
 
   /* END OF OPTIONS */
+
+  if (
+    document.location.toString().includes("logon.jsp") &&
+    options.halloweenifyHolidays
+  ) {
+    halloweenifyHolidays();
+    return;
+  }
 
   if (document.body.id === "layoutbody") {
     // Hijack the main loader to prettify the spinner
@@ -542,5 +553,37 @@ function removeExtraSpecifications() {
     ) {
       row.style.display = "none";
     }
+  }
+}
+
+function halloweenifyHolidays() {
+  // Look I hate this code so much that I take time out of each day to look at it
+  // and hate it, but until dexember rolls around I can't fix it properly. It works.
+  const imgs = Array.from(document.getElementsByTagName("img"));
+
+  const afl = imgs.filter((img) => img.src.endsWith("AFL.gif"))[0]
+    .parentElement;
+  const ahl = imgs.filter((img) => img.src.endsWith("AHL.gif"))[0]
+    .parentElement;
+
+  const changeStyles = (link: HTMLElement, section: string) => {
+    link.innerHTML = `Click for ${section} Holiday Hours`;
+    if (section === "AFL") {
+      link.innerHTML = `🎃 ${link.innerHTML} 🦇<br>`;
+      link.style.color = "orange";
+    } else {
+      link.innerHTML = `🕷️ ${link.innerHTML} 👻`;
+      link.style.color = "black";
+    }
+    link.style.fontSize = "1.4rem";
+    link.style.textDecoration = "none";
+
+    if (document.querySelector(".font") as HTMLDivElement | null)
+      document.querySelector(".font")!.textContent = "HAPPY HALLOWDAYS!!";
+  };
+
+  if (ahl && afl) {
+    changeStyles(afl, "AFL");
+    changeStyles(ahl, "AHL");
   }
 }
