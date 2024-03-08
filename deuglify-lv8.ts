@@ -22,13 +22,13 @@
     submissionFormLinks: true,
     fastgridLinks: true,
 
-    // Truncate notes so they don't take up too much space
-    truncateSampleIDs: true,
-    truncateNotes: true,
+    // Truncate on submission lists to not have double-rows and end with "..." instead
+    truncate: true,
 
     // Enable toxi-centric options
     toxiUpgrades: {
       idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
+      removeExtraReceivePageDates: true, // remove two extra column and add option to show them
       iconifyLocations: true, // receive page location simplified and upgrade Kemptville obviousness
     },
 
@@ -196,13 +196,14 @@
 
     if (options.submissionFormLinks) addSubmissionFormLinks();
 
-    if (options.truncateNotes || options.truncateSampleIDs)
-      truncate(options.truncateSampleIDs, options.truncateNotes);
+    if (options.truncate) truncateSampleList();
 
     const onReceivePage = document.location.search?.includes("Receive");
 
     if (onReceivePage) {
       if (options.toxiUpgrades.iconifyLocations) iconifyLocations();
+      if (options.toxiUpgrades.removeExtraReceivePageDates)
+        removeExtraReceivePageDates();
     }
 
     if (!onReceivePage && options.toxiUpgrades.idexxMod)
@@ -503,41 +504,26 @@ function addUncheckIdexxButton() {
   });
 }
 
-function truncate(sampleIDs: boolean, notes: boolean) {
+function truncateSampleList() {
   const rows = document.querySelectorAll(
     "tr[class^=list_tablerow]"
   ) as NodeListOf<HTMLTableRowElement>;
 
-  // I'm sure this can be tidied up if you're bored
-  // also add "common name" as an option
+  const notesID = "column40";
+
   for (const row of rows) {
-    if (sampleIDs) {
-      const sampleIDCell = row.querySelector(
-        "#column22"
-      ) as HTMLTableCellElement | null;
-      if (!sampleIDCell) continue;
+    for (const childNode of row.childNodes as NodeListOf<HTMLTableCellElement>) {
+      if (childNode.tagName !== "TD" || childNode.id === "column19") continue;
 
-      sampleIDCell.style.maxWidth = "10rem";
-      sampleIDCell.style.whiteSpace = "nowrap";
-      sampleIDCell.style.overflow = "hidden";
-      sampleIDCell.style.textOverflow = "ellipsis";
+      if (childNode.id === notesID) {
+        childNode.style.maxWidth = "10rem";
+        childNode.style.color = "red";
+      }
 
-      sampleIDCell.setAttribute("title", sampleIDCell.textContent ?? "");
-    }
-
-    if (notes) {
-      const notesCell = row.querySelector(
-        "#column40"
-      ) as HTMLTableCellElement | null;
-      if (!notesCell) continue;
-
-      notesCell.style.maxWidth = "10rem";
-      notesCell.style.whiteSpace = "nowrap";
-      notesCell.style.overflow = "hidden";
-      notesCell.style.textOverflow = "ellipsis";
-      notesCell.style.color = "red";
-
-      notesCell.setAttribute("title", notesCell.textContent ?? "");
+      childNode.style.whiteSpace = "nowrap";
+      childNode.style.overflow = "hidden";
+      childNode.style.textOverflow = "ellipsis";
+      childNode.setAttribute("title", childNode.textContent ?? "");
     }
   }
 }
@@ -610,4 +596,55 @@ function halloweenifyHolidays() {
     changeStyles(afl, "AFL");
     changeStyles(ahl, "AHL");
   }
+}
+
+function removeExtraReceivePageDates() {
+  const initialHeadingRow = document
+    .getElementById("listlayout")
+    ?.cloneNode(true);
+  if (!initialHeadingRow) return;
+
+  const headings = document.querySelectorAll("th");
+
+  const columnsToRemove = ["Sampling Date", "Due Date"];
+
+  let indexesToHide: number[] = [];
+  for (const [index, heading] of headings.entries()) {
+    if (columnsToRemove.includes(heading.textContent?.trim() ?? "")) {
+      indexesToHide = [...indexesToHide, index];
+      heading.style.display = "none";
+    }
+  }
+  const dataRows = document.querySelectorAll("tr[class^=list_tablerow]");
+  for (const row of dataRows) {
+    const children = row.querySelectorAll(
+      "td.list_tablebodycell"
+    ) as NodeListOf<HTMLTableCellElement>;
+    for (const index of indexesToHide) {
+      children[index].style.display = "none";
+    }
+  }
+  const topTD = document.querySelector(".list_pagingtable_top td:last-child");
+  const buttonShowHidden = document.createElement("button");
+  buttonShowHidden.setAttribute(
+    "style",
+    "margin-left: 20px; padding: 0 6px; position: relative; top: 1px;"
+  );
+  buttonShowHidden.textContent = "Show Hidden Columns";
+  buttonShowHidden.addEventListener("click", () => {
+    for (const index of indexesToHide) {
+      for (const row of dataRows) {
+        const children = row.querySelectorAll(
+          "td.list_tablebodycell"
+        ) as NodeListOf<HTMLTableCellElement>;
+        children[index].style.display = "table-cell";
+      }
+    }
+
+    const headingRow = document.getElementById("listlayout");
+    headingRow?.replaceWith(initialHeadingRow);
+
+    buttonShowHidden.remove();
+  });
+  topTD?.append(buttonShowHidden);
 }
