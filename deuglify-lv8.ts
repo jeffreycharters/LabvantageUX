@@ -28,7 +28,16 @@
     // Enable toxi-centric options
     toxiUpgrades: {
       idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
-      removeExtraReceivePageDates: true, // remove two extra column and add option to show them
+      removeExtraReceivePageColumns: true, // remove extra columns and add option to show them
+      receivePageColumnsToRemove: ["Sampling Date", "Due Date"], // if above is true, column titles to remove
+      removeExtraManagePageColumns: true, //remove extra columns and add option to show them
+      managePageColumnsToRemove: [
+        "Sampling Date",
+        "Due Date",
+        "Temp",
+        "Incident link",
+        "Rpt",
+      ], // if above is true, column titles to remove
       iconifyLocations: true, // receive page location simplified and upgrade Kemptville obviousness
     },
 
@@ -130,21 +139,21 @@
     ]),
 
     // Cleaning up clutter
-    removeExtraColumns: true,
-    headingsToRemove: [
-      "list_header3",
-      "list_header13",
-      "list_header14",
-      "list_header19",
-      "list_header20",
-    ],
-    cellsToRemove: [
-      "column43",
-      "Sampling Date",
-      "Due Date",
-      "Incident link",
-      "column42",
-    ],
+    // removeExtraColumns: true,
+    // headingsToRemove: [
+    //   "list_header3",
+    //   "list_header13",
+    //   "list_header14",
+    //   "list_header19",
+    //   "list_header20",
+    // ],
+    // cellsToRemove: [
+    //   "column43",
+    //   "Sampling Date",
+    //   "Due Date",
+    //   "Incident link",
+    //   "column42",
+    // ],
   };
 
   /* END OF OPTIONS */
@@ -202,16 +211,18 @@
 
     if (onReceivePage) {
       if (options.toxiUpgrades.iconifyLocations) iconifyLocations();
-      if (options.toxiUpgrades.removeExtraReceivePageDates)
-        removeExtraReceivePageDates();
+      if (options.toxiUpgrades.removeExtraReceivePageColumns)
+        removeExtraSubmissionColumns(
+          options.toxiUpgrades.receivePageColumnsToRemove
+        );
+    } else {
+      if (options.toxiUpgrades.idexxMod) addUncheckIdexxButton();
+
+      if (options.toxiUpgrades.removeExtraManagePageColumns)
+        removeExtraSubmissionColumns(
+          options.toxiUpgrades.managePageColumnsToRemove
+        );
     }
-
-    if (!onReceivePage && options.toxiUpgrades.idexxMod)
-      addUncheckIdexxButton();
-
-    if (!onReceivePage && options.removeExtraColumns)
-      removeColumns(options.headingsToRemove, options.cellsToRemove);
-
     return;
   }
 
@@ -244,26 +255,26 @@
 })();
 
 /* CLEANING UP SAMPLE LIST UNUSED COLUMS */
-function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
-  const headers = document.querySelectorAll(
-    "#list_list th"
-  ) as NodeListOf<HTMLTableCellElement> | null;
+// function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
+//   const headers = document.querySelectorAll(
+//     "#list_list th"
+//   ) as NodeListOf<HTMLTableCellElement> | null;
 
-  for (const header of headers ?? []) {
-    if (headingsToRemove.includes(header.id)) {
-      header.style.display = "none";
-    }
-  }
+//   for (const header of headers ?? []) {
+//     if (headingsToRemove.includes(header.id)) {
+//       header.style.display = "none";
+//     }
+//   }
 
-  const cells = document.querySelectorAll(
-    "#list_list td"
-  ) as NodeListOf<HTMLTableCellElement> | null;
-  for (const cell of cells ?? []) {
-    if (cellsToRemove.includes(cell.id)) {
-      cell.style.display = "none";
-    }
-  }
-}
+//   const cells = document.querySelectorAll(
+//     "#list_list td"
+//   ) as NodeListOf<HTMLTableCellElement> | null;
+//   for (const cell of cells ?? []) {
+//     if (cellsToRemove.includes(cell.id)) {
+//       cell.style.display = "none";
+//     }
+//   }
+// }
 
 /* RAINBOW MODE!!! */
 function activateRainbowMode() {
@@ -509,6 +520,7 @@ function truncateSampleList() {
     "tr[class^=list_tablerow]"
   ) as NodeListOf<HTMLTableRowElement>;
 
+  const sampleID = "column22";
   const notesID = "column40";
 
   for (const row of rows) {
@@ -516,9 +528,11 @@ function truncateSampleList() {
       if (childNode.tagName !== "TD" || childNode.id === "column19") continue;
 
       if (childNode.id === notesID) {
-        childNode.style.maxWidth = "10rem";
+        childNode.style.maxWidth = "12rem";
         childNode.style.color = "red";
       }
+
+      if (childNode.id === sampleID) childNode.style.maxWidth = "10rem";
 
       childNode.style.whiteSpace = "nowrap";
       childNode.style.overflow = "hidden";
@@ -598,7 +612,7 @@ function halloweenifyHolidays() {
   }
 }
 
-function removeExtraReceivePageDates() {
+function removeExtraSubmissionColumns(columnList: string[]) {
   const initialHeadingRow = document
     .getElementById("listlayout")
     ?.cloneNode(true);
@@ -606,11 +620,9 @@ function removeExtraReceivePageDates() {
 
   const headings = document.querySelectorAll("th");
 
-  const columnsToRemove = ["Sampling Date", "Due Date"];
-
   let indexesToHide: number[] = [];
   for (const [index, heading] of headings.entries()) {
-    if (columnsToRemove.includes(heading.textContent?.trim() ?? "")) {
+    if (columnList.includes(heading.textContent?.trim() ?? "")) {
       indexesToHide = [...indexesToHide, index];
       heading.style.display = "none";
     }
