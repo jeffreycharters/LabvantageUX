@@ -28,10 +28,9 @@
     // Enable toxi-centric options
     toxiUpgrades: {
       idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
-      removeExtraReceivePageColumns: true, // remove extra columns and add option to show them
       receivePageColumnsToRemove: ["Sampling Date", "Due Date"], // if above is true, column titles to remove
-      removeExtraManagePageColumns: true, //remove extra columns and add option to show them
       managePageColumnsToRemove: [
+        "Notes",
         "Sampling Date",
         "Due Date",
         "Temp",
@@ -49,6 +48,7 @@
       "CHEM-114",
       "CHEM-162",
       "CHEM-354",
+      "TOXI-013",
       "TOXI-064",
     ],
 
@@ -137,23 +137,6 @@
       "Test date reached",
       // "TodaysSamplesToRec",
     ]),
-
-    // Cleaning up clutter
-    // removeExtraColumns: true,
-    // headingsToRemove: [
-    //   "list_header3",
-    //   "list_header13",
-    //   "list_header14",
-    //   "list_header19",
-    //   "list_header20",
-    // ],
-    // cellsToRemove: [
-    //   "column43",
-    //   "Sampling Date",
-    //   "Due Date",
-    //   "Incident link",
-    //   "column42",
-    // ],
   };
 
   /* END OF OPTIONS */
@@ -211,15 +194,15 @@
 
     if (onReceivePage) {
       if (options.toxiUpgrades.iconifyLocations) iconifyLocations();
-      if (options.toxiUpgrades.removeExtraReceivePageColumns)
-        removeExtraSubmissionColumns(
+      if (options.toxiUpgrades.receivePageColumnsToRemove.length > 0)
+        removeExtraTableColumns(
           options.toxiUpgrades.receivePageColumnsToRemove
         );
     } else {
       if (options.toxiUpgrades.idexxMod) addUncheckIdexxButton();
 
-      if (options.toxiUpgrades.removeExtraManagePageColumns)
-        removeExtraSubmissionColumns(
+      if (options.toxiUpgrades.managePageColumnsToRemove.length > 0)
+        removeExtraTableColumns(
           options.toxiUpgrades.managePageColumnsToRemove
         );
     }
@@ -254,27 +237,6 @@
   if (tableHeader) tableHeader.style.backgroundColor = "#005e8a";
 })();
 
-/* CLEANING UP SAMPLE LIST UNUSED COLUMS */
-// function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
-//   const headers = document.querySelectorAll(
-//     "#list_list th"
-//   ) as NodeListOf<HTMLTableCellElement> | null;
-
-//   for (const header of headers ?? []) {
-//     if (headingsToRemove.includes(header.id)) {
-//       header.style.display = "none";
-//     }
-//   }
-
-//   const cells = document.querySelectorAll(
-//     "#list_list td"
-//   ) as NodeListOf<HTMLTableCellElement> | null;
-//   for (const cell of cells ?? []) {
-//     if (cellsToRemove.includes(cell.id)) {
-//       cell.style.display = "none";
-//     }
-//   }
-// }
 
 /* RAINBOW MODE!!! */
 function activateRainbowMode() {
@@ -612,21 +574,28 @@ function halloweenifyHolidays() {
   }
 }
 
-function removeExtraSubmissionColumns(columnList: string[]) {
+function removeExtraTableColumns(removeList: string[]) {
   const initialHeadingRow = document
     .getElementById("listlayout")
     ?.cloneNode(true);
+
   if (!initialHeadingRow) return;
 
   const headings = document.querySelectorAll("th");
 
   let indexesToHide: number[] = [];
+  console.log(removeList)
   for (const [index, heading] of headings.entries()) {
-    if (columnList.includes(heading.textContent?.trim() ?? "")) {
+    const text = heading.textContent?.trim() ?? ""
+
+    if (removeList.includes(text)) {
       indexesToHide = [...indexesToHide, index];
       heading.style.display = "none";
+      removeList = [...removeList].filter((str) => str != text)
+      console.log(removeList)
     }
   }
+
   const dataRows = document.querySelectorAll("tr[class^=list_tablerow]");
   for (const row of dataRows) {
     const children = row.querySelectorAll(

@@ -25,10 +25,9 @@
         // Enable toxi-centric options
         toxiUpgrades: {
             idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
-            removeExtraReceivePageColumns: true, // remove extra columns and add option to show them
             receivePageColumnsToRemove: ["Sampling Date", "Due Date"], // if above is true, column titles to remove
-            removeExtraManagePageColumns: true, //remove extra columns and add option to show them
             managePageColumnsToRemove: [
+                "Notes",
                 "Sampling Date",
                 "Due Date",
                 "Temp",
@@ -45,6 +44,7 @@
             "CHEM-114",
             "CHEM-162",
             "CHEM-354",
+            "TOXI-013",
             "TOXI-064",
         ],
         // Manage Page Advanced Search Queries to remove
@@ -131,22 +131,6 @@
             "Test date reached",
             // "TodaysSamplesToRec",
         ]),
-        // Cleaning up clutter
-        // removeExtraColumns: true,
-        // headingsToRemove: [
-        //   "list_header3",
-        //   "list_header13",
-        //   "list_header14",
-        //   "list_header19",
-        //   "list_header20",
-        // ],
-        // cellsToRemove: [
-        //   "column43",
-        //   "Sampling Date",
-        //   "Due Date",
-        //   "Incident link",
-        //   "column42",
-        // ],
     };
     /* END OF OPTIONS */
     if (options.halloweenifyHolidays &&
@@ -196,14 +180,14 @@
         if (onReceivePage) {
             if (options.toxiUpgrades.iconifyLocations)
                 iconifyLocations();
-            if (options.toxiUpgrades.removeExtraReceivePageColumns)
-                removeExtraSubmissionColumns(options.toxiUpgrades.receivePageColumnsToRemove);
+            if (options.toxiUpgrades.receivePageColumnsToRemove.length > 0)
+                removeExtraTableColumns(options.toxiUpgrades.receivePageColumnsToRemove);
         }
         else {
             if (options.toxiUpgrades.idexxMod)
                 addUncheckIdexxButton();
-            if (options.toxiUpgrades.removeExtraManagePageColumns)
-                removeExtraSubmissionColumns(options.toxiUpgrades.managePageColumnsToRemove);
+            if (options.toxiUpgrades.managePageColumnsToRemove.length > 0)
+                removeExtraTableColumns(options.toxiUpgrades.managePageColumnsToRemove);
         }
         return;
     }
@@ -229,25 +213,6 @@
     if (tableHeader)
         tableHeader.style.backgroundColor = "#005e8a";
 })();
-/* CLEANING UP SAMPLE LIST UNUSED COLUMS */
-// function removeColumns(headingsToRemove: string[], cellsToRemove: string[]) {
-//   const headers = document.querySelectorAll(
-//     "#list_list th"
-//   ) as NodeListOf<HTMLTableCellElement> | null;
-//   for (const header of headers ?? []) {
-//     if (headingsToRemove.includes(header.id)) {
-//       header.style.display = "none";
-//     }
-//   }
-//   const cells = document.querySelectorAll(
-//     "#list_list td"
-//   ) as NodeListOf<HTMLTableCellElement> | null;
-//   for (const cell of cells ?? []) {
-//     if (cellsToRemove.includes(cell.id)) {
-//       cell.style.display = "none";
-//     }
-//   }
-// }
 /* RAINBOW MODE!!! */
 function activateRainbowMode() {
     var _a;
@@ -505,7 +470,7 @@ function halloweenifyHolidays() {
         changeStyles(ahl, "AHL");
     }
 }
-function removeExtraSubmissionColumns(columnList) {
+function removeExtraTableColumns(removeList) {
     var _a, _b, _c;
     const initialHeadingRow = (_a = document
         .getElementById("listlayout")) === null || _a === void 0 ? void 0 : _a.cloneNode(true);
@@ -513,10 +478,14 @@ function removeExtraSubmissionColumns(columnList) {
         return;
     const headings = document.querySelectorAll("th");
     let indexesToHide = [];
+    console.log(removeList);
     for (const [index, heading] of headings.entries()) {
-        if (columnList.includes((_c = (_b = heading.textContent) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : "")) {
+        const text = (_c = (_b = heading.textContent) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : "";
+        if (removeList.includes(text)) {
             indexesToHide = [...indexesToHide, index];
             heading.style.display = "none";
+            removeList = [...removeList].filter((str) => str != text);
+            console.log(removeList);
         }
     }
     const dataRows = document.querySelectorAll("tr[class^=list_tablerow]");
