@@ -18,6 +18,10 @@
     // Make festive holiday links Halloweenier
     halloweenifyHolidays: true,
 
+    // Add Reference Ranges Accessibility
+    // Enabling this makes fast grid values with reference ranges appear bold
+    referenceRangeAccessibility: true,
+
     // Submission Form links
     submissionFormLinks: true,
     fastgridLinks: true,
@@ -28,7 +32,11 @@
     // Enable toxi-centric options
     toxiUpgrades: {
       idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
-      receivePageColumnsToRemove: ["Sampling Date", "Due Date"], // if above is true, column titles to remove
+      receivePageColumnsToRemove: [
+        "Notes",
+        "Sampling Date",
+        "Due Date"
+      ], 
       managePageColumnsToRemove: [
         "Notes",
         "Sampling Date",
@@ -36,7 +44,7 @@
         "Temp",
         "Incident link",
         "Rpt",
-      ], // if above is true, column titles to remove
+      ], 
       iconifyLocations: true, // receive page location simplified and upgrade Kemptville obviousness
     },
 
@@ -212,18 +220,28 @@
   if (window.self.frameElement?.id === "rightframe") {
     /* WELCOME TO THE RIGHTFRAME            */
     /* This contains the fastgrid tables    */
-    const observer = new MutationObserver((_mutations, observer) => {
+    const fastGridObserver = new MutationObserver((_mutations, observer) => {
       const submissionDivs = document.querySelectorAll(
         "div.dataentry2-rowheaderdiv:first-child > .gwt-HTML"
       );
 
       if (submissionDivs.length > 0) {
         observer.disconnect();
-        addFastgridLinks();
+        if (options.fastgridLinks)addFastgridLinks();
       }
     });
 
-    observer.observe(window.document.body, { childList: true, subtree: true });
+    const inputCellsObserver = new MutationObserver((_mutations, observer) => {
+      const resultInputs = document.querySelectorAll("input.dataentry2-gridentry")
+
+      if (resultInputs.length > 0) {
+        observer.disconnect();
+        if (options.referenceRangeAccessibility) addReferenceRangeAccessibility(resultInputs as NodeListOf<HTMLInputElement>);
+      } 
+    });
+
+    fastGridObserver.observe(window.document.body, { childList: true, subtree: true });
+    inputCellsObserver.observe(window.document.body, { childList: true, subtree: true });
 
     return;
   }
@@ -584,7 +602,6 @@ function removeExtraTableColumns(removeList: string[]) {
   const headings = document.querySelectorAll("th");
 
   let indexesToHide: number[] = [];
-  console.log(removeList)
   for (const [index, heading] of headings.entries()) {
     const text = heading.textContent?.trim() ?? ""
 
@@ -628,4 +645,10 @@ function removeExtraTableColumns(removeList: string[]) {
     buttonShowHidden.remove();
   });
   topTD?.append(buttonShowHidden);
+}
+
+function addReferenceRangeAccessibility(inputs: NodeListOf<HTMLInputElement>) {
+  for (const [index, input] of inputs.entries()) {
+    if (["red", "green"].includes(input.style.color)) inputs[index].style.fontWeight = "bold";
+  }
 }
