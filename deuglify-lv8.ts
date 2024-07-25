@@ -56,6 +56,7 @@
       "CHEM-114",
       "CHEM-162",
       "CHEM-354",
+      "CHEM-357",
       "TOXI-013",
       "TOXI-064",
     ],
@@ -472,12 +473,17 @@ const idexxButtonfunctions = {
   uncheckIdexxInputs: () => {
     const submissionRows = document.querySelectorAll("[class^=list_tablerow]");
     const selectors = document.getElementsByName("selector");
+    const tableHeaders = Array.from(document.querySelectorAll("div[id^=list_header]"));
+    const projSeqNoIndex = tableHeaders.findIndex(n => n.textContent?.startsWith("Proj. Seq. No"));
+    console.log(projSeqNoIndex)
+
     for (let i = 0; i < submissionRows.length; ++i) {
-      const submissionSource = submissionRows[i].childNodes[11];
-      if (submissionSource.textContent?.includes("IDEXX")) {
+      const submissionSource = submissionRows[i].querySelectorAll("td.list_tablebodycell")[projSeqNoIndex];
+      if (submissionSource.textContent?.startsWith("IDEXX")) {
         selectors[i].click();
       }
     }
+    idexxButtonfunctions.removeRemoveIdexxButton();
   },
 };
 
@@ -609,7 +615,6 @@ function removeExtraTableColumns(removeList: string[]) {
       indexesToHide = [...indexesToHide, index];
       heading.style.display = "none";
       removeList = [...removeList].filter((str) => str != text)
-      console.log(removeList)
     }
   }
 
