@@ -34,12 +34,16 @@
       idexxMod: true, // make IDEXX appear in red, add "uncheck idexx" button to manage
       receivePageColumnsToRemove: [
         "Notes",
+        "Owner",
+        "Client Name",
         "Sampling Date",
         "Due Date"
       ], 
       managePageColumnsToRemove: [
         "Notes",
         "Sampling Date",
+        "Client Name",
+        "Owner",
         "Due Date",
         "Temp",
         "Incident link",
