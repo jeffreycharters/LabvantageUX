@@ -150,6 +150,13 @@
       "Test date reached",
       // "TodaysSamplesToRec",
     ]),
+    // Make the following queries easier to quickly identify
+    manageQueriesToStar: new Set([
+      "Sample by Short Code",
+      "SampleBySubmission",
+      "Samples Worklist ID",
+      "Samples by Method ID R...",
+    ]),
   };
 
   /* END OF OPTIONS */
@@ -182,7 +189,10 @@
       if (onReceivePage) {
         if (options.toxiUpgrades.iconifyLocations) iconifyLocations();
         hideAdvancedSearchQueries(options.receiveQueriesToHide);
-      } else hideAdvancedSearchQueries(options.manageQueriesToHide);
+      } else {
+        hideAdvancedSearchQueries(options.manageQueriesToHide);
+        starAdvancedSearchQueries(options.manageQueriesToStar);
+      }
     });
     return;
   }
@@ -316,6 +326,24 @@ function hideAdvancedSearchQueries(queriesToHide: Set<string>) {
         item.style.display = "none";
     }
   });
+}
+
+function starAdvancedSearchQueries(toStar: Set<string>) {
+  // Advanced search
+  const queryList = document.querySelectorAll(
+    "#querysearch_row tr"
+  ) as NodeListOf<HTMLTableRowElement> | null;
+
+  for (const query of queryList ?? []) {
+    if (toStar.has(query.textContent?.trim() ?? "")) {
+      const link = query.querySelector(
+        "span.modern_href"
+      ) as HTMLSpanElement | null;
+      if (!link) continue;
+
+      link.innerHTML = `⚡ ` + link.innerHTML;
+    }
+  }
 }
 
 function addAutoCompleteButtons(methodButtons: string[]) {

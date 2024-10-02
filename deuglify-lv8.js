@@ -143,6 +143,13 @@
             "Test date reached",
             // "TodaysSamplesToRec",
         ]),
+        // Make the following queries easier to quickly identify
+        manageQueriesToStar: new Set([
+            "Sample by Short Code",
+            "SampleBySubmission",
+            "Samples Worklist ID",
+            "Samples by Method ID R...",
+        ]),
     };
     /* END OF OPTIONS */
     if (options.halloweenifyHolidays &&
@@ -169,8 +176,10 @@
                     iconifyLocations();
                 hideAdvancedSearchQueries(options.receiveQueriesToHide);
             }
-            else
+            else {
                 hideAdvancedSearchQueries(options.manageQueriesToHide);
+                starAdvancedSearchQueries(options.manageQueriesToStar);
+            }
         });
         return;
     }
@@ -281,6 +290,19 @@ function hideAdvancedSearchQueries(queriesToHide) {
                 item.style.display = "none";
         }
     });
+}
+function starAdvancedSearchQueries(toStar) {
+    var _a, _b;
+    // Advanced search
+    const queryList = document.querySelectorAll("#querysearch_row tr");
+    for (const query of queryList !== null && queryList !== void 0 ? queryList : []) {
+        if (toStar.has((_b = (_a = query.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : "")) {
+            const link = query.querySelector("span.modern_href");
+            if (!link)
+                continue;
+            link.innerHTML = `⚡ ` + link.innerHTML;
+        }
+    }
 }
 function addAutoCompleteButtons(methodButtons) {
     var _a;
