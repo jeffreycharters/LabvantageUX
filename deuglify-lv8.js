@@ -33,7 +33,7 @@
                 "Owner",
                 "Client Name",
                 "Sampling Date",
-                "Due Date"
+                "Due Date",
             ],
             managePageColumnsToRemove: [
                 "Notes",
@@ -222,8 +222,14 @@
                     addReferenceRangeAccessibility(resultInputs);
             }
         });
-        fastGridObserver.observe(window.document.body, { childList: true, subtree: true });
-        inputCellsObserver.observe(window.document.body, { childList: true, subtree: true });
+        fastGridObserver.observe(window.document.body, {
+            childList: true,
+            subtree: true,
+        });
+        inputCellsObserver.observe(window.document.body, {
+            childList: true,
+            subtree: true,
+        });
         return;
     }
     // create date width fix
@@ -356,18 +362,23 @@ function iconifyLocations() {
         return;
     const animalNameColumn = 7;
     const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
+    const addKemptvilleTag = (row) => {
+        row.childNodes[animalNameColumn].innerHTML =
+            row.childNodes[animalNameColumn].textContent +
+                ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
+    };
     rows.forEach((row) => {
         row.childNodes.forEach((cell) => {
             if (cell.textContent === "In Transit from AHL to AFL")
                 cell.textContent = "AHL ➜ AFL";
-            if (cell.textContent === "In Transit from Kemptville to AHL")
+            if (cell.textContent === "In Transit from Kemptville to AHL") {
                 cell.textContent = "Kemptville ➜ AFL";
+                addKemptvilleTag(cell);
+            }
             if (cell.textContent === "K") {
                 cell.style.fontWeight = "800";
                 cell.style.color = "hsl(40, 100%, 45%)";
-                row.childNodes[animalNameColumn].innerHTML =
-                    row.childNodes[animalNameColumn].textContent +
-                        ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
+                addKemptvilleTag(cell);
             }
         });
     });
@@ -395,7 +406,7 @@ const idexxButtonfunctions = {
         const submissionRows = document.querySelectorAll("[class^=list_tablerow]");
         const selectors = document.getElementsByName("selector");
         const tableHeaders = Array.from(document.querySelectorAll("div[id^=list_header]"));
-        const projSeqNoIndex = tableHeaders.findIndex(n => { var _a; return (_a = n.textContent) === null || _a === void 0 ? void 0 : _a.startsWith("Proj. Seq. No"); });
+        const projSeqNoIndex = tableHeaders.findIndex((n) => { var _a; return (_a = n.textContent) === null || _a === void 0 ? void 0 : _a.startsWith("Proj. Seq. No"); });
         console.log(projSeqNoIndex);
         for (let i = 0; i < submissionRows.length; ++i) {
             const submissionSource = submissionRows[i].querySelectorAll("td.list_tablebodycell")[projSeqNoIndex];

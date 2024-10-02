@@ -37,8 +37,8 @@
         "Owner",
         "Client Name",
         "Sampling Date",
-        "Due Date"
-      ], 
+        "Due Date",
+      ],
       managePageColumnsToRemove: [
         "Notes",
         "Sampling Date",
@@ -48,7 +48,7 @@
         "Temp",
         "Incident link",
         "Rpt",
-      ], 
+      ],
       iconifyLocations: true, // receive page location simplified and upgrade Kemptville obviousness
     },
 
@@ -215,9 +215,7 @@
       if (options.toxiUpgrades.idexxMod) addUncheckIdexxButton();
 
       if (options.toxiUpgrades.managePageColumnsToRemove.length > 0)
-        removeExtraTableColumns(
-          options.toxiUpgrades.managePageColumnsToRemove
-        );
+        removeExtraTableColumns(options.toxiUpgrades.managePageColumnsToRemove);
     }
     return;
   }
@@ -232,21 +230,32 @@
 
       if (submissionDivs.length > 0) {
         observer.disconnect();
-        if (options.fastgridLinks)addFastgridLinks();
+        if (options.fastgridLinks) addFastgridLinks();
       }
     });
 
     const inputCellsObserver = new MutationObserver((_mutations, observer) => {
-      const resultInputs = document.querySelectorAll("input.dataentry2-gridentry")
+      const resultInputs = document.querySelectorAll(
+        "input.dataentry2-gridentry"
+      );
 
       if (resultInputs.length > 0) {
         observer.disconnect();
-        if (options.referenceRangeAccessibility) addReferenceRangeAccessibility(resultInputs as NodeListOf<HTMLInputElement>);
-      } 
+        if (options.referenceRangeAccessibility)
+          addReferenceRangeAccessibility(
+            resultInputs as NodeListOf<HTMLInputElement>
+          );
+      }
     });
 
-    fastGridObserver.observe(window.document.body, { childList: true, subtree: true });
-    inputCellsObserver.observe(window.document.body, { childList: true, subtree: true });
+    fastGridObserver.observe(window.document.body, {
+      childList: true,
+      subtree: true,
+    });
+    inputCellsObserver.observe(window.document.body, {
+      childList: true,
+      subtree: true,
+    });
 
     return;
   }
@@ -259,7 +268,6 @@
   const tableHeader = document.getElementById("list_tableheaderdiv");
   if (tableHeader) tableHeader.style.backgroundColor = "#005e8a";
 })();
-
 
 /* RAINBOW MODE!!! */
 function activateRainbowMode() {
@@ -428,19 +436,24 @@ function iconifyLocations() {
 
   const animalNameColumn = 7;
   const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
+  const addKemptvilleTag = (row: HTMLTableCellElement) => {
+    (row.childNodes[animalNameColumn] as HTMLTableCellElement).innerHTML =
+      row.childNodes[animalNameColumn].textContent +
+      ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
+  };
 
   rows.forEach((row) => {
     (row.childNodes as NodeListOf<HTMLTableCellElement>).forEach((cell) => {
       if (cell.textContent === "In Transit from AHL to AFL")
         cell.textContent = "AHL ➜ AFL";
-      if (cell.textContent === "In Transit from Kemptville to AHL")
+      if (cell.textContent === "In Transit from Kemptville to AHL") {
         cell.textContent = "Kemptville ➜ AFL";
+        addKemptvilleTag(cell);
+      }
       if (cell.textContent === "K") {
         cell.style.fontWeight = "800";
         cell.style.color = "hsl(40, 100%, 45%)";
-        (row.childNodes[animalNameColumn] as HTMLTableCellElement).innerHTML =
-          row.childNodes[animalNameColumn].textContent +
-          ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
+        addKemptvilleTag(cell);
       }
     });
   });
@@ -477,12 +490,18 @@ const idexxButtonfunctions = {
   uncheckIdexxInputs: () => {
     const submissionRows = document.querySelectorAll("[class^=list_tablerow]");
     const selectors = document.getElementsByName("selector");
-    const tableHeaders = Array.from(document.querySelectorAll("div[id^=list_header]"));
-    const projSeqNoIndex = tableHeaders.findIndex(n => n.textContent?.startsWith("Proj. Seq. No"));
-    console.log(projSeqNoIndex)
+    const tableHeaders = Array.from(
+      document.querySelectorAll("div[id^=list_header]")
+    );
+    const projSeqNoIndex = tableHeaders.findIndex((n) =>
+      n.textContent?.startsWith("Proj. Seq. No")
+    );
+    console.log(projSeqNoIndex);
 
     for (let i = 0; i < submissionRows.length; ++i) {
-      const submissionSource = submissionRows[i].querySelectorAll("td.list_tablebodycell")[projSeqNoIndex];
+      const submissionSource = submissionRows[i].querySelectorAll(
+        "td.list_tablebodycell"
+      )[projSeqNoIndex];
       if (submissionSource.textContent?.startsWith("IDEXX")) {
         selectors[i].click();
       }
@@ -613,12 +632,12 @@ function removeExtraTableColumns(removeList: string[]) {
 
   let indexesToHide: number[] = [];
   for (const [index, heading] of headings.entries()) {
-    const text = heading.textContent?.trim() ?? ""
+    const text = heading.textContent?.trim() ?? "";
 
     if (removeList.includes(text)) {
       indexesToHide = [...indexesToHide, index];
       heading.style.display = "none";
-      removeList = [...removeList].filter((str) => str != text)
+      removeList = [...removeList].filter((str) => str != text);
     }
   }
 
@@ -658,6 +677,7 @@ function removeExtraTableColumns(removeList: string[]) {
 
 function addReferenceRangeAccessibility(inputs: NodeListOf<HTMLInputElement>) {
   for (const [index, input] of inputs.entries()) {
-    if (["red", "green"].includes(input.style.color)) inputs[index].style.fontWeight = "bold";
+    if (["red", "green"].includes(input.style.color))
+      inputs[index].style.fontWeight = "bold";
   }
 }
