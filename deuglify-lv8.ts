@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         De-uglify LV8
-// @namespace    https://goobers.ca
-// @version      0.1
-// @description  Remove columns from the manage screen (and slightly breaks the receive page but not unusable).
-// @author       You
+// @name         Poweruser options for LabVantage 8
+// @namespace    https://github.com/jeffreycharters/LabvantageUX
+// @version      0.2
+// @description  Remove unused queries and columns, etc.
+// @author       Probably Jeffrey but could be anyone
 // @match        https://sapphire.lsd.uoguelph.ca:8443/labservices/*
 // @match        https://jaguar.lsd.uoguelph.ca:8443/labservices/*
 // @match        https://testresults.lsd.uoguelph.ca/labservices/*
