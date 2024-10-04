@@ -7,6 +7,7 @@
 // @author       You
 // @match        https://sapphire.lsd.uoguelph.ca:8443/labservices/*
 // @match        https://jaguar.lsd.uoguelph.ca:8443/labservices/*
+// @match        https://testresults.lsd.uoguelph.ca/labservices/*
 // @grant        none
 // ==/UserScript==
 (function () {
@@ -143,7 +144,7 @@
             "Test date reached",
             // "TodaysSamplesToRec",
         ]),
-        // Make the following queries easier to quickly identify
+        // Make the following queries easier to identify quickly
         manageQueriesToStar: new Set([
             "Sample by Short Code",
             "SampleBySubmission",
@@ -151,7 +152,9 @@
             "Samples by Method ID R...",
         ]),
     };
-    /* END OF OPTIONS */
+    /* =====================================*/
+    /* ========== END OF OPTIONS ===========*/
+    /* =====================================*/
     if (options.halloweenifyHolidays &&
         document.location.toString().includes("logon.jsp")) {
         halloweenifyHolidays();
