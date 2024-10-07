@@ -466,11 +466,10 @@ function iconifyLocations() {
   const rows = document.querySelectorAll("#list_list [class^=list_tablerow]");
   if (!rows) return;
 
-  const animalNameColumn = 7;
   const kemptvilleStyling = "color: hsl(0, 0%, 60%); font-style: italic;";
-  const addKemptvilleTag = (row: HTMLTableCellElement) => {
-    (row.childNodes[animalNameColumn] as HTMLTableCellElement).innerHTML =
-      row.childNodes[animalNameColumn].textContent +
+  const addKemptvilleTag = (cell: HTMLTableCellElement) => {
+    cell.innerHTML =
+      cell.innerHTML +
       ` <span style="${kemptvilleStyling}">(Kemptville)</span>`;
   };
 
