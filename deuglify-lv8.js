@@ -377,7 +377,7 @@ function upgradeAwfulUglySpinner() {
     const spinner = (_a = window.top) === null || _a === void 0 ? void 0 : _a.document.querySelector("img[src='WEB-CORE/images/spinners/bluetone.gif']");
     if (!spinner)
         return;
-    spinner.src = "https://svgshare.com/i/Ri2.svg";
+    spinner.src = spinnerSRC;
     spinner.style.width = "176px";
     spinner.style.height = "176px";
 }
@@ -577,3 +577,4 @@ function addReferenceRangeAccessibility(inputs) {
             inputs[index].style.fontWeight = "bold";
     }
 }
+const spinnerSRC = "data:image/svg+xml,%3Csvg xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='64px' height='64px' viewBox='0 0 128 128' xml:space='preserve'%3E%3Cg%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23086073' fill-opacity='1'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(45 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(90 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(135 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(180 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(225 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(270 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(315 64 64)'/%3E%3CanimateTransform attributeName='transform' type='rotate' values='0 64 64;45 64 64;90 64 64;135 64 64;180 64 64;225 64 64;270 64 64;315 64 64' calcMode='discrete' dur='720ms' repeatCount='indefinite'/%3E%3C/g%3E%3C/svg%3E";
