@@ -345,6 +345,7 @@ function addSubmissionFormLinks() {
         const submissionID = (_b = submissionRegex.exec((_a = row.textContent) !== null && _a !== void 0 ? _a : "")) === null || _b === void 0 ? void 0 : _b[0];
         const submissionLinkDiv = document.createElement("div");
         submissionLinkDiv.setAttribute("style", "border: 1px solid  #999; padding: 0 3px; border-radius: 3px; margin-left: 35px; background: #eed; filter: opacity(0.65); display: inline");
+        const externalLinkSRC = `<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="14" height="14" viewBox="0 0 24 24" stroke-width="1.25" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" /><line x1="10" y1="14" x2="20" y2="4" /><polyline points="15 4 20 4 20 9" /></svg>`;
         const submissionLink = document.createElement("a");
         submissionLink.href = linkInitial + submissionID + linkFinal;
         submissionLink.setAttribute("style", "font-weight: normal; color: #000; letter-spacing: normal; display: inline-flex; align-items: center; gap: 2px;");
@@ -431,7 +432,6 @@ const idexxButtonfunctions = {
         const selectors = document.getElementsByName("selector");
         const tableHeaders = Array.from(document.querySelectorAll("div[id^=list_header]"));
         const projSeqNoIndex = tableHeaders.findIndex((n) => { var _a; return (_a = n.textContent) === null || _a === void 0 ? void 0 : _a.startsWith("Proj. Seq. No"); });
-        console.log(projSeqNoIndex);
         for (let i = 0; i < submissionRows.length; ++i) {
             const submissionSource = submissionRows[i].querySelectorAll("td.list_tablebodycell")[projSeqNoIndex];
             if ((_a = submissionSource.textContent) === null || _a === void 0 ? void 0 : _a.startsWith("IDEXX")) {
@@ -578,4 +578,3 @@ function addReferenceRangeAccessibility(inputs) {
     }
 }
 const spinnerSRC = "data:image/svg+xml,%3Csvg xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='64px' height='64px' viewBox='0 0 128 128' xml:space='preserve'%3E%3Cg%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23086073' fill-opacity='1'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(45 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(90 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(135 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(180 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(225 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(270 64 64)'/%3E%3Cpath d='M38.52 33.37L21.36 16.2A63.6 63.6 0 0 1 59.5.16v24.3a39.5 39.5 0 0 0-20.98 8.92z' fill='%23c0c0c0' fill-opacity='0.25' transform='rotate(315 64 64)'/%3E%3CanimateTransform attributeName='transform' type='rotate' values='0 64 64;45 64 64;90 64 64;135 64 64;180 64 64;225 64 64;270 64 64;315 64 64' calcMode='discrete' dur='720ms' repeatCount='indefinite'/%3E%3C/g%3E%3C/svg%3E";
-const externalLinkSRC = `<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="14" height="14" viewBox="0 0 24 24" stroke-width="1.25" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" /><line x1="10" y1="14" x2="20" y2="4" /><polyline points="15 4 20 4 20 9" /></svg>`;
