@@ -158,6 +158,7 @@
       "SampleBySubmission",
       "Samples Worklist ID",
       "Samples by Method ID R...",
+      "Short Code DateRange",
     ]),
   };
 
